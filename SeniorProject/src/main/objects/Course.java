@@ -32,7 +32,7 @@ public class Course {
 
     //toString method
     public String toString() {
-        return "Course [semesterTaken=" + semesterTaken + "\tprefix=" + prefix + ", number=" + Integer.toString(number) + ", grade=" + grade
+        return "Course: [semesterTaken=" + semesterTaken + ", prefix=" + prefix + ", number=" + Integer.toString(number) + ", grade=" + grade
                 + ", description=" + description + ", instructor=" + instructor + "]";
     }
 

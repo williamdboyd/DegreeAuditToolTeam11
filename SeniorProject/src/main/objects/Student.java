@@ -38,7 +38,7 @@ public class Student {
     }
 
     //Constructor for Student with full information
-    public Student(String name, String id, String program, String major, List<Course> courses, String specialization, String admittedDate, String anticipatedGraduation, String fastTrackorThesis, double cumulativeGPA, double coreGPA, String academicStanding, boolean graduationStatus) {
+    public Student(String name, String id, String program, String major, List<Course> courses, String specialization, String admittedDate, String anticipatedGraduation, String fastTrackorThesis, double cumulativeGPA, double coreGPA, double electiveGPA, String academicStanding, boolean graduationStatus) {
         this.name = name;
         this.id = id;
         this.program = program;
@@ -50,6 +50,7 @@ public class Student {
         this.fastTrackorThesis = fastTrackorThesis;
         this.cumulativeGPA = cumulativeGPA;
         this.coreGPA = coreGPA;
+        this.electiveGPA = electiveGPA;
         this.academicStanding = academicStanding;
         this.graduationStatus = graduationStatus;
     }
@@ -57,6 +58,21 @@ public class Student {
 
     //toString method
     public String toString() {
+        System.out.println("Student Name: " + name);
+        System.out.println("Student ID: " + id);
+        System.out.println("Program: " + program);
+        System.out.println("Major: " + major);
+        for (Course course : courses) {
+            System.out.println(course.toString());
+        }
+        System.out.println("Specialization: " + specialization);
+        System.out.println("Admitted Date: " + admittedDate);
+        System.out.println("Anticipated Graduation: " + anticipatedGraduation);
+        System.out.println("Fast Track or Thesis: " + fastTrackorThesis);
+        System.out.println("Cumulative GPA: " + cumulativeGPA);
+        System.out.println("Core GPA: " + coreGPA);
+        System.out.println("Academic Standing: " + academicStanding);
+        System.out.println("Graduation Status: " + graduationStatus);
         return "";
     }
 
