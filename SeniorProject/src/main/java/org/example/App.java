@@ -26,4 +26,15 @@ public class App
           }
           System.out.println("\n\n\n" + hold.toString());
     }
+
+    public void saveStudent() {
+      //Saves the student object as a file in the savedStudents folder
+
+    }
+
+    public Student loadStudent(String fileName) {
+        //Loads a student object from a file in the savedStudents folder
+        return null;
+    }
+
 }

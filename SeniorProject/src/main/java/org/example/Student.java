@@ -84,10 +84,9 @@ public class Student {
         return "";
     }
 
-
-
     public List<Course> checkCoreCourses(List<Course> coreReqs) {
         //Takes the list of courses a student has taken and compares them to the list of core courses
+        this.coreCourses = new ArrayList<Course>();
         for (Course course : courses) {
             for (Course coreReq : coreReqs) {
                 if (course.getPrefix().equals(coreReq.getPrefix()) && course.getNumber() == coreReq.getNumber()) {
@@ -132,6 +131,16 @@ public class Student {
         }
     }
 
+    public void removeCourse(Course course){
+        //Takes a course and removes it from the list of courses a student has taken
+        this.courses.remove(course);
+        if (this.coreCourses.contains(course)){
+            this.coreCourses.remove(course);
+        }
+        else if (this.electiveCourses.contains(course)){
+            this.electiveCourses.remove(course);
+        }
+    }
 
 
 
