@@ -28,12 +28,15 @@ public class Student {
         program = "";
         major = "";
         courses = new ArrayList<Course>();
+        coreCourses = new ArrayList<Course>();
+        electiveCourses = new ArrayList<Course>();
         specialization = "";
         admittedDate = "";
         anticipatedGraduation = "";
         fastTrackorThesis = "";
         cumulativeGPA = 0.0;
         coreGPA = 0.0;
+        electiveGPA = 0.0;
         academicStanding = "";
         graduationStatus = false;
     }
@@ -79,20 +82,50 @@ public class Student {
 
 
 
-    public void checkCoreCourses() {
+    public List<Course> checkCoreCourses(List<Course> coreReqs) {
         //Takes the list of courses a student has taken and compares them to the list of core courses
+        for (Course course : courses) {
+            for (Course coreReq : coreReqs) {
+                if (course.getPrefix().equals(coreReq.getPrefix()) && course.getNumber() == coreReq.getNumber()) {
+                    coreReqs.remove(coreReq);
+                    this.coreCourses.add(coreReq);
+                }
+            }
+        }
+
+        //Returns empty if all core courses have been taken otherwise returns the list of core courses that still need to be taken
+        return coreReqs;
     }
 
-    public void checkElectiveCourses() {
+    public List<Course> checkElectiveCourses(List<Course> electiveReqs) {
         //Takes the list of courses a student has taken and compares them to the list of electrive courses
+        for (Course course : courses) {
+            for (Course electiveReq : electiveReqs) {
+                if (course.getPrefix().equals(electiveReq.getPrefix()) && course.getNumber() == electiveReq.getNumber()) {
+                    electiveReqs.remove(electiveReq);
+                    this.electiveCourses.add(electiveReq);
+                }
+            }
+        }
+        
+        //Returns empty if all elective courses have been taken otherwise returns the list of elective courses that still need to be taken
+        return electiveReqs;
     }
 
     public void calculateCoreGPA() {
         //Takes the list of core courses a student has taken and calculates their core GPA
+        //Only works after checkCoreCourses() has been called
+        for(Course course: coreCourses){
+            this.coreGPA += course.getCreds();
+        }
     }
 
     public void calculateElectiveGPA() {
         //Takes the list of elective courses a student has taken and calculates their elective GPA
+        //Only works after checkElectiveCourses() has been called
+        for(Course course: electiveCourses){
+            this.electiveGPA += course.getCreds();
+        }
     }
 
 

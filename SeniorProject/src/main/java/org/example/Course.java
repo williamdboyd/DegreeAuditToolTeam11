@@ -7,7 +7,7 @@ public class Course {
     String grade;
     String description;
     String instructor;
-    float creds;
+    double creds;
 
     //Default Constructor
     public Course() {
@@ -36,7 +36,7 @@ public class Course {
     //toString method
     public String toString() {
         return "Course: [semesterTaken=" + semesterTaken + ", prefix=" + prefix + ", number=" + Integer.toString(number) + ", grade=" + grade
-                + ", description=" + description + ", instructor=" + instructor + "]";
+                + ", description=" + description + ", instructor=" + instructor + ", credits=" + Double.toString(creds) + "]";
     }
 
 
@@ -79,10 +79,10 @@ public class Course {
     public void setInstructor(String instructor) {
         this.instructor = instructor;
     }
-    public float getCreds() {
+    public double getCreds() {
         return creds;
     }
-    public void setCreds(float creds) {
+    public void setCreds(double creds) {
         this.creds = creds;
     }
 }

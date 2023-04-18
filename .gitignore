@@ -5,3 +5,6 @@ FirstPdf.pdf
 DegreeAuditToolTeam11.jar
 
 target/
+
+*.pdf
+*.txt
