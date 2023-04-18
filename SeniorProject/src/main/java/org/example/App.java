@@ -17,13 +17,13 @@ public class App
 
         try {
             FileWriter myWriter = new FileWriter("filename.txt");
-            myWriter.write(hold.printOut());
+            myWriter.write(hold.toString());
             myWriter.close();
             System.out.println("Successfully wrote to the file.");
           } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
           }
-          System.out.println("\n\n\n" + hold.printOut());
+          System.out.println("\n\n\n" + hold.toString());
     }
 }

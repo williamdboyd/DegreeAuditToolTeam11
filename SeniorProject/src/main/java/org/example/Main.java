@@ -38,7 +38,7 @@ public class Main {
     public static String[] AdmissionLetter;
 
     public static void main(String[] args) throws FileNotFoundException {
-        String path = "f:\\FirstPdf.pdf";
+        String path = "FirstPdf.pdf";
         PdfWriter pdfWriter = new PdfWriter(path);
         PdfDocument pdfDocument = new PdfDocument(pdfWriter);
         pdfDocument.addNewPage();

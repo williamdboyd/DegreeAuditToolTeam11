@@ -61,7 +61,6 @@ public class TranscriptReader
                     sem = line;
                     //System.out.println(sem + " is the semester");
                     if(masterf){
-                        hold.setSem1(sem);
                         //System.out.println("This is the first semester");
                         fsem = sem;
                         masterf = false;
@@ -96,7 +95,7 @@ public class TranscriptReader
                 hold.setMajor(line.substring(hh, line.indexOf("Major")));
             }
             if(line.contains("Combined Cum")){
-                hold.setCcGPA(Float.parseFloat(line.substring(17,22)));
+                hold.setCumulativeGPA(Float.parseFloat(line.substring(17,22)));
                 //System.out.println("GPA is " + hold.getCcGPA());
             }
             if(line.contains("Student ID:")){
@@ -117,7 +116,7 @@ public class TranscriptReader
 
     public static Course parseCourse(String line, String sem){
         Course ret = new Course();
-        ret.setSemester(sem);
+        ret.setSemesterTaken(sem);
         ret.setPrefix(line.substring(0, line.indexOf(" ")));
         //System.out.println(ret.getPrefix() + " is the pre");
         line = line.substring(line.indexOf(" ") + 1);
