@@ -1,18 +1,53 @@
 package org.example;
 
 public class Course {
-    public String semester;
-    public String prefix;
-    public int number;
-    public String description;
-    public float creds;
-    public String grade;
+    String semesterTaken;
+    String prefix;
+    int number;
+    String grade;
+    String description;
+    String instructor;
+    float creds;
 
-    public String getSemester() {
-        return semester;
+    //Default Constructor
+    public Course() {
+        semesterTaken = "";
+        prefix = "";
+        number = 0;
+        grade = "";
+        description = "";
+        instructor = "";
+        creds = 0;
     }
-    public void setSemester(String semester) {
-        this.semester = semester;
+
+    //Constructor for Course with full information
+    public Course(String semesterTaken, String prefix, int number, String grade, String description, String instructor) {
+        this.semesterTaken = semesterTaken;
+        this.prefix = prefix;
+        this.number = number;
+        this.grade = grade;
+        this.description = description;
+        this.instructor = instructor;
+        this.creds = 0;
+    }
+
+
+
+    //toString method
+    public String toString() {
+        return "Course: [semesterTaken=" + semesterTaken + ", prefix=" + prefix + ", number=" + Integer.toString(number) + ", grade=" + grade
+                + ", description=" + description + ", instructor=" + instructor + "]";
+    }
+
+
+
+
+    // Access/Setters for the variables
+    public String getSemesterTaken() {
+        return semesterTaken;
+    }
+    public void setSemesterTaken(String semesterTaken) {
+        this.semesterTaken = semesterTaken;
     }
     public String getPrefix() {
         return prefix;
@@ -26,26 +61,28 @@ public class Course {
     public void setNumber(int number) {
         this.number = number;
     }
-    public String getDescription() {
-        return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    public float getCreds() {
-        return creds;
-    }
-    public void setCreds(float creds) {
-        this.creds = creds;
-    }
     public String getGrade() {
         return grade;
     }
     public void setGrade(String grade) {
         this.grade = grade;
     }
-    public String printout() {
-        String ret = "Prefix: " + prefix + "\nSemester: " + semester + "\nNumber: " + number + "\nDescription: " + description + "\nCredits: " + creds + "\nGrade: " + grade;
-        return ret;
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public String getInstructor() {
+        return instructor;
+    }
+    public void setInstructor(String instructor) {
+        this.instructor = instructor;
+    }
+    public float getCreds() {
+        return creds;
+    }
+    public void setCreds(float creds) {
+        this.creds = creds;
     }
 }
