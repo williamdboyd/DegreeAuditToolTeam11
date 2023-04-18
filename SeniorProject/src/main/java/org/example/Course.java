@@ -21,14 +21,14 @@ public class Course {
     }
 
     //Constructor for Course with full information
-    public Course(String semesterTaken, String prefix, int number, String grade, String description, String instructor) {
+    public Course(String semesterTaken, String prefix, int number, String grade, String description, String instructor, double creds) {
         this.semesterTaken = semesterTaken;
         this.prefix = prefix;
         this.number = number;
         this.grade = grade;
         this.description = description;
         this.instructor = instructor;
-        this.creds = 0;
+        this.creds = creds;
     }
 
 

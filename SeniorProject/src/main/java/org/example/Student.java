@@ -65,23 +65,11 @@ public class Student {
 
     //toString method
     public String toString() {
-        System.out.println("Student Name: " + name);
-        System.out.println("Student ID: " + id);
-        System.out.println("Program: " + program);
-        System.out.println("Major: " + major);
+        String student = "Student Name: " + name + "\nStudent ID: " + id + "\nProgram: " + program + "\nMajor: " + major + "\nSpecialization: " + specialization + "\nAdmitted Date: " + admittedDate + "\nAnticipated Graduation: " + anticipatedGraduation + "\nFast Track: " + fastTrack + "\nThesis: " + thesis + "\nCumulative GPA: " + cumulativeGPA + "\nCore GPA: " + coreGPA + "\nElective GPA: " + electiveGPA + "\nAcademic Standing: " + academicStanding + "\nGraduation Status: " + graduationStatus + "\n";
         for (Course course : courses) {
-            System.out.println(course.toString());
+            student += course.toString() + "\n";
         }
-        System.out.println("Specialization: " + specialization);
-        System.out.println("Admitted Date: " + admittedDate);
-        System.out.println("Anticipated Graduation: " + anticipatedGraduation);
-        System.out.println("Fast Track: " + fastTrack);
-        System.out.println("Thesis: " + thesis);
-        System.out.println("Cumulative GPA: " + cumulativeGPA);
-        System.out.println("Core GPA: " + coreGPA);
-        System.out.println("Academic Standing: " + academicStanding);
-        System.out.println("Graduation Status: " + graduationStatus);
-        return "";
+        return student;
     }
 
     public List<Course> checkCoreCourses(List<Course> coreReqs) {
@@ -215,7 +203,7 @@ public class Student {
     public Boolean getFastTrack() {
         return fastTrack;
     }
-    public void setFastTrackorThesis(Boolean fastTrack) {
+    public void setFastTrack(Boolean fastTrack) {
         this.fastTrack = fastTrack;
     }
     public void setThesis(Boolean thesis) {
