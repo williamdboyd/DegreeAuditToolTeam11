@@ -10,6 +10,8 @@ public class Student {
     String program;
     String major;
     List<Course> courses;
+    List<Course> coreCourses;
+    List<Course> electiveCourses;
     String specialization;
     String admittedDate;
     String anticipatedGraduation;
@@ -76,6 +78,27 @@ public class Student {
         return "";
     }
 
+
+
+    public void setCoreCourses() {
+        //Takes the list of courses a student has taken and compares them to the list of core courses
+    }
+
+    public void setElectiveCourses() {
+        //Takes the list of courses a student has taken and compares them to the list of electrive courses
+    }
+
+    public void calculateCoreGPA() {
+        //Takes the list of core courses a student has taken and calculates their core GPA
+    }
+
+    public void calculateElectiveGPA() {
+        //Takes the list of elective courses a student has taken and calculates their elective GPA
+    }
+
+
+
+
     // Getters/Setters for the variables
     public String getName() {
         return name;
@@ -110,6 +133,14 @@ public class Student {
     }
     public void setCourses(List<Course> courses) {
         this.courses = courses;
+    }
+
+    public List<Course> getCoreCourses() {
+        return coreCourses;
+    }
+
+    public List<Course> getElectiveCourses() {
+        return electiveCourses;
     }
 
     public String getSpecialization() {
@@ -173,4 +204,7 @@ public class Student {
     public void setGraduationStatus(boolean graduationStatus) {
         this.graduationStatus = graduationStatus;
     }
+
+    
+
 }
