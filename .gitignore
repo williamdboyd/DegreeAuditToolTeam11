@@ -8,3 +8,4 @@ target/
 
 *.pdf
 *.txt
+SeniorProject/target/classes/org/example/*.class
