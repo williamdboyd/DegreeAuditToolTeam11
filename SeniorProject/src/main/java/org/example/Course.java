@@ -1,4 +1,4 @@
-package com.example;
+package org.example;
 
 public class Course {
     public String semester;

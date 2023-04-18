@@ -1,4 +1,4 @@
-package com.example;
+package org.example;
 
 import java.io.FileWriter;
 import java.io.IOException;

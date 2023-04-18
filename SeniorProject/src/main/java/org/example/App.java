@@ -1,4 +1,4 @@
-package com.example;
+package org.example;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -6,6 +6,8 @@ import java.io.IOException;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+
+//just tests the transcript reader on a specified pdf
 
 public class App 
 {

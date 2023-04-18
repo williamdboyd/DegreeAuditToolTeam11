@@ -1,4 +1,4 @@
-package com.example;
+package org.example;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +43,9 @@ public class Student {
 
     public void addCourse(Course c){
         courses.add(c);
+    }
+    public List<Course> getCourses(){
+        return courses;
     }
 
     public String printOut(){
