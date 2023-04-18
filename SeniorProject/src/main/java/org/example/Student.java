@@ -14,7 +14,8 @@ public class Student {
     String specialization;
     String admittedDate;
     String anticipatedGraduation;
-    String fastTrackorThesis;
+    Boolean fastTrack;
+    Boolean thesis;
     double cumulativeGPA;
     double coreGPA;
     double electiveGPA;
@@ -33,7 +34,8 @@ public class Student {
         specialization = "";
         admittedDate = "";
         anticipatedGraduation = "";
-        fastTrackorThesis = "";
+        fastTrack = false;
+        thesis = false;
         cumulativeGPA = 0.0;
         coreGPA = 0.0;
         electiveGPA = 0.0;
@@ -42,7 +44,7 @@ public class Student {
     }
 
     //Constructor for Student with full information
-    public Student(String name, Integer id, String program, String major, List<Course> courses, String specialization, String admittedDate, String anticipatedGraduation, String fastTrackorThesis, double cumulativeGPA, double coreGPA, double electiveGPA, String academicStanding, boolean graduationStatus) {
+    public Student(String name, Integer id, String program, String major, List<Course> courses, String specialization, String admittedDate, String anticipatedGraduation, Boolean fastTrack, Boolean thesis, double cumulativeGPA, double coreGPA, double electiveGPA, String academicStanding, boolean graduationStatus) {
         this.name = name;
         this.id = id;
         this.program = program;
@@ -51,7 +53,8 @@ public class Student {
         this.specialization = specialization;
         this.admittedDate = admittedDate;
         this.anticipatedGraduation = anticipatedGraduation;
-        this.fastTrackorThesis = fastTrackorThesis;
+        this.fastTrack = fastTrack;
+        this.thesis = thesis;
         this.cumulativeGPA = cumulativeGPA;
         this.coreGPA = coreGPA;
         this.electiveGPA = electiveGPA;
@@ -72,7 +75,8 @@ public class Student {
         System.out.println("Specialization: " + specialization);
         System.out.println("Admitted Date: " + admittedDate);
         System.out.println("Anticipated Graduation: " + anticipatedGraduation);
-        System.out.println("Fast Track or Thesis: " + fastTrackorThesis);
+        System.out.println("Fast Track: " + fastTrack);
+        System.out.println("Thesis: " + thesis);
         System.out.println("Cumulative GPA: " + cumulativeGPA);
         System.out.println("Core GPA: " + coreGPA);
         System.out.println("Academic Standing: " + academicStanding);
@@ -199,21 +203,24 @@ public class Student {
     public void setAnticipatedGraduation(String anticipatedGraduation) {
         this.anticipatedGraduation = anticipatedGraduation;
     }
-
-    public String getFastTrackorThesis() {
-        return fastTrackorThesis;
+    public Boolean getFastTrack() {
+        return fastTrack;
     }
-    public void setFastTrackorThesis(String fastTrackorThesis) {
-        this.fastTrackorThesis = fastTrackorThesis;
+    public void setFastTrackorThesis(Boolean fastTrack) {
+        this.fastTrack = fastTrack;
     }
-
+    public void setThesis(Boolean thesis) {
+        this.thesis = thesis;
+    }
+    public Boolean getThesis() {
+        return thesis;
+    }
     public double getCumulativeGPA() {
         return cumulativeGPA;
     }
     public void setCumulativeGPA(double cumulativeGPA) {
         this.cumulativeGPA = cumulativeGPA;
     }
-
     public double getCoreGPA() {
         return coreGPA;
     }
