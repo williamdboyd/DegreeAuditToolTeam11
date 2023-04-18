@@ -2,6 +2,8 @@ package org.example;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
@@ -43,6 +45,7 @@ public class TranscriptReader
         boolean masterf = false;
         String n;
         Student hold = new Student();
+        Pattern courseCheck = Pattern.compile("[A-Z]+ [0-9][0-9][0-9][0-9] [A-Z]");
 
 
         for(int i=0; i < output.length(); i++)
@@ -101,9 +104,9 @@ public class TranscriptReader
                 //make sure all ids are 10 length
                 //System.out.println(hold.getID());
             }
-            if(line.indexOf("CS") == 0 || line.indexOf("CE") == 0){
-                if(Integer.parseInt(line.substring(3, 4)) > 4){
-                    //System.out.println("This is a  course");
+            if(courseCheck.matcher(line).find()){
+                //System.out.println("This is a  course\n" + line + "\n\n\n");
+                if(Integer.parseInt(line.substring(line.indexOf(" ") + 1, line.indexOf(" ") + 2)) > 4){
                     hold.addCourse(parseCourse(line, sem));
                 }
             }
