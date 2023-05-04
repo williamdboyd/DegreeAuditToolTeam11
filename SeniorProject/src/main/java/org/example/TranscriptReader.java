@@ -132,7 +132,10 @@ public class TranscriptReader
         ret.setDescription(line.substring(0, hh - 1));
         //System.out.println(ret.getDescription() + " is desc");
         line = line.substring(hh);
-        ret.setCreds(Float.parseFloat(line.substring(0, 5)));
+        String creds = String.valueOf(ret.getNumber());
+        creds = creds.substring(1,2);
+        int credits = Integer.parseInt(creds);
+        ret.setCreds(Double.valueOf(credits));
         //System.out.println(ret.getCreds());
         hh = 0;
         h = '0';

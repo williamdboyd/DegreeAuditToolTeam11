@@ -11,6 +11,7 @@ public class Student {
     List<Course> courses;
     List<Course> coreCourses;
     List<Course> electiveCourses;
+    List<Course> preReqCourses;
     String specialization;
     String admittedDate;
     String anticipatedGraduation;
@@ -31,6 +32,7 @@ public class Student {
         courses = new ArrayList<Course>();
         coreCourses = new ArrayList<Course>();
         electiveCourses = new ArrayList<Course>();
+        preReqCourses = new ArrayList<Course>();
         specialization = "";
         admittedDate = "";
         anticipatedGraduation = "";
@@ -67,16 +69,19 @@ public class Student {
     public String toString() {
         String student = "Student Name: " + name + "\nStudent ID: " + id + "\nProgram: " + program + "\nMajor: " + major + "\nSpecialization: " + specialization + "\nAdmitted Date: " + admittedDate + "\nAnticipated Graduation: " + anticipatedGraduation + "\nFast Track: " + fastTrack + "\nThesis: " + thesis + "\nCumulative GPA: " + cumulativeGPA + "\nCore GPA: " + coreGPA + "\nElective GPA: " + electiveGPA + "\nAcademic Standing: " + academicStanding + "\nGraduation Status: " + graduationStatus + "\n";
         for (Course course : courses) {
-            student += course.toString() + "\n";
+            student += course.fulltoString() + "\n";
         }
         return student;
     }
 
-    public List<Course> checkCoreCourses(List<Course> coreReqs) {
+    public ArrayList<Course> checkCoreCourses(ArrayList<Course> passCoreReqs) {
         //Takes the list of courses a student has taken and compares them to the list of core courses
+        ArrayList<Course> coreReqs = new ArrayList<Course>(passCoreReqs);
         this.coreCourses = new ArrayList<Course>();
         for (Course course : courses) {
-            for (Course coreReq : coreReqs) {
+            //System.out.println("COURSE:" + course);
+            for (Course coreReq : passCoreReqs) {
+                //System.out.println("COREREQ:" + coreReq);
                 if (course.getPrefix().equals(coreReq.getPrefix()) && course.getNumber() == coreReq.getNumber()) {
                     coreReqs.remove(coreReq);
                     this.coreCourses.add(coreReq);
@@ -88,21 +93,65 @@ public class Student {
         return coreReqs;
     }
 
-    public List<Course> checkElectiveCourses(List<Course> electiveReqs) {
-        //Takes the list of courses a student has taken and compares them to the list of electrive courses
+    //Checks if the student meets the elective Hour Requirement, returns the remaining elective hours
+    public Double checkElectiveCourses(Double electiveHourReq) {
+        this.electiveCourses = new ArrayList<Course>();
+        Double hoursLeft = electiveHourReq;
+        boolean clearsCore = true;
+        boolean clearsPreReq = true;
+
         for (Course course : courses) {
-            for (Course electiveReq : electiveReqs) {
-                if (course.getPrefix().equals(electiveReq.getPrefix()) && course.getNumber() == electiveReq.getNumber()) {
-                    electiveReqs.remove(electiveReq);
-                    this.electiveCourses.add(electiveReq);
-                }
+            for (Course coreCourse : coreCourses)
+                if (course.isEqual(coreCourse)) {
+                    clearsCore = false;
+                    break;
+                } else {
+                    for (Course PreReqCourse : preReqCourses){
+                        if (course.isEqual(PreReqCourse)){
+                            clearsPreReq = false;
+                            break;
+                        }
+                    }
             }
+            
+            //Adds the course as an elective course if they are not apart of the Core or PreReq Courses
+            if (clearsCore && clearsPreReq) {
+                electiveCourses.add(course);
+            }
+        }
+
+
+        //Iterates through the electives after they've been added and subtracts the credits from the hoursLeft
+        for (Course course : electiveCourses) {
+            System.out.println(course.fulltoString());
+            hoursLeft -= course.getCreds();
         }
         
         //Returns empty if all elective courses have been taken otherwise returns the list of elective courses that still need to be taken
-        return electiveReqs;
+        return hoursLeft;
     }
 
+    //Checks if the student meets the preReq Course Requirement returns a list of all the preReq courses that still need to be taken
+    public ArrayList<Course> checkPreRequisiteCourses(ArrayList<Course> DPpreReqCourses) {
+        this.preReqCourses = new ArrayList<Course>();
+        ArrayList<Course> altPreReqCourses = new ArrayList<Course>(DPpreReqCourses);
+        for (Course course : courses) {
+            for (Course preReqCourse : DPpreReqCourses) {
+                if (course.isEqual(preReqCourse)) {
+                    altPreReqCourses.remove(preReqCourse);
+                    this.preReqCourses.add(course);
+                }
+            }
+        }
+
+        return altPreReqCourses;
+    }
+
+
+    public void calculateCumGPA() {
+    
+    }
+    
     public void calculateCoreGPA() {
         //Takes the list of core courses a student has taken and calculates their core GPA
         //Only works after checkCoreCourses() has been called
@@ -230,6 +279,9 @@ public class Student {
     }
     public void setElectiveGPA(double electiveGPA) {
         this.electiveGPA = electiveGPA;
+    }
+    public List<Course> getPreReqCourses() {
+        return preReqCourses;
     }
     public String getAcademicStanding() {
         return academicStanding;

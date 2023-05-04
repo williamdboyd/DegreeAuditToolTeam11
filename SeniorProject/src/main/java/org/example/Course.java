@@ -20,6 +20,13 @@ public class Course {
         creds = 0;
     }
 
+    //Constructor with outline information
+    public Course(String prefix, int number, String description){
+        this.prefix = prefix;
+        this.number = number;
+        this.description = description;
+    }
+
     //Constructor for Course with full information
     public Course(String semesterTaken, String prefix, int number, String grade, String description, String instructor, double creds) {
         this.semesterTaken = semesterTaken;
@@ -32,14 +39,22 @@ public class Course {
     }
 
 
-
-    //toString method
     public String toString() {
+        return prefix + " " + Integer.toString(number) + " " + description;
+    }
+    //fulltoString method
+    public String fulltoString() {
         return "Course: [semesterTaken=" + semesterTaken + ", prefix=" + prefix + ", number=" + Integer.toString(number) + ", grade=" + grade
                 + ", description=" + description + ", instructor=" + instructor + ", credits=" + Double.toString(creds) + "]";
     }
 
-
+    //equals method for Courses
+    public boolean isEqual(Course course) {
+        if (this.prefix.equals(course.prefix) && this.number == course.number) {
+            return true;
+        }
+        return false;
+    }
 
 
     // Access/Setters for the variables
