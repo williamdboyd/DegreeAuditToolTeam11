@@ -7,6 +7,7 @@ public class Student {
     String name;
     Integer id;
     String program;
+    DegreePlan degreePlan;
     String major;
     List<Course> courses;
     List<Course> coreCourses;
@@ -28,6 +29,7 @@ public class Student {
         name = "";
         id = 0;
         program = "";
+        degreePlan = new DegreePlan();
         major = "";
         courses = new ArrayList<Course>();
         coreCourses = new ArrayList<Course>();
@@ -79,9 +81,7 @@ public class Student {
         ArrayList<Course> coreReqs = new ArrayList<Course>(passCoreReqs);
         this.coreCourses = new ArrayList<Course>();
         for (Course course : courses) {
-            //System.out.println("COURSE:" + course);
             for (Course coreReq : passCoreReqs) {
-                //System.out.println("COREREQ:" + coreReq);
                 if (course.getPrefix().equals(coreReq.getPrefix()) && course.getNumber() == coreReq.getNumber()) {
                     coreReqs.remove(coreReq);
                     this.coreCourses.add(coreReq);
@@ -123,7 +123,6 @@ public class Student {
 
         //Iterates through the electives after they've been added and subtracts the credits from the hoursLeft
         for (Course course : electiveCourses) {
-            System.out.println(course.fulltoString());
             hoursLeft -= course.getCreds();
         }
         
@@ -151,7 +150,7 @@ public class Student {
     public void calculateCumGPA() {
     
     }
-    
+
     public void calculateCoreGPA() {
         //Takes the list of core courses a student has taken and calculates their core GPA
         //Only works after checkCoreCourses() has been called
@@ -179,6 +178,14 @@ public class Student {
         }
     }
 
+    public void initializeCourses(){
+            //Checking Prerequisites
+            this.checkPreRequisiteCourses(this.degreePlan.getPreRequisiteCourses());
+            //Checking student core Requirements
+            this.checkCoreCourses(this.degreePlan.getCoreCourses());
+            //Checking student elective Requirements
+            this.checkElectiveCourses(this.degreePlan.getElectiveHourRequirement());
+    }
 
 
     // Getters/Setters for the variables
@@ -296,7 +303,12 @@ public class Student {
     public void setGraduationStatus(boolean graduationStatus) {
         this.graduationStatus = graduationStatus;
     }
-
+    public void setDegreePlan(DegreePlan degreePlan) {
+        this.degreePlan = degreePlan;
+    }
+    public DegreePlan getDegreePlan() {
+        return degreePlan;
+    }
     
 
 }
