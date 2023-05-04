@@ -52,7 +52,11 @@ public class Course {
     public boolean isEqual(Course course) {
         if (this.prefix.equals(course.prefix) && this.number == course.number) {
             return true;
-        }
+        } else if (((this.prefix.equals("CS") && course.getPrefix().equals("SE")) && this.number == course.number)) {
+            return true;
+        } else if (((this.prefix.equals("SE") && course.getPrefix().equals("CS")) && this.number == course.number)) {
+            return true;
+        } 
         return false;
     }
 

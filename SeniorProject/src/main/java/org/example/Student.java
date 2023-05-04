@@ -82,9 +82,9 @@ public class Student {
         this.coreCourses = new ArrayList<Course>();
         for (Course course : courses) {
             for (Course coreReq : passCoreReqs) {
-                if (course.getPrefix().equals(coreReq.getPrefix()) && course.getNumber() == coreReq.getNumber()) {
+                if (course.isEqual(coreReq)) {
                     coreReqs.remove(coreReq);
-                    this.coreCourses.add(coreReq);
+                    this.coreCourses.add(course);
                 }
             }
         }
@@ -97,10 +97,12 @@ public class Student {
     public Double checkElectiveCourses(Double electiveHourReq) {
         this.electiveCourses = new ArrayList<Course>();
         Double hoursLeft = electiveHourReq;
-        boolean clearsCore = true;
-        boolean clearsPreReq = true;
 
+
+        
         for (Course course : courses) {
+            boolean clearsCore = true;
+            boolean clearsPreReq = true;
             for (Course coreCourse : coreCourses)
                 if (course.isEqual(coreCourse)) {
                     clearsCore = false;
@@ -113,7 +115,6 @@ public class Student {
                         }
                     }
             }
-            
             //Adds the course as an elective course if they are not apart of the Core or PreReq Courses
             if (clearsCore && clearsPreReq) {
                 electiveCourses.add(course);
