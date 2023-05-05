@@ -216,7 +216,7 @@ public class App
       }
 
       validInput = true;
-
+      
       System.out.println("Would you like to generate a printable degree plan?(Y/N):");
       while(validInput) {
         String input = sc.nextLine();
@@ -259,6 +259,7 @@ public class App
               String[] inputList = courseInput.split(" ");
               inputList[0] = inputList[0].toUpperCase();
               Course elective = new Course(inputList[0], Integer.valueOf(inputList[1]), inputList[2]);
+              elective.setGrade("none");
               student.getElectiveCourses().add(elective);
               System.out.println("Course added successfully");
               nestedInput = false;

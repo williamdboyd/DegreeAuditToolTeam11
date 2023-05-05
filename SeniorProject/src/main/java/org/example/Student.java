@@ -377,6 +377,198 @@ public class Student {
         return ret;
     }
 
+
+    //OutstandingElectives, OutstandingCore, and OutstandingCourses the last section of the Audit
+    //The returns may need to be adjusted for formatting
+    public String outstandingElectives(){
+        double total = 0;
+        double finished = 0;
+        double unfinishedH = 0;
+        ArrayList<Course> unfulfilled = new ArrayList<Course>();
+        for(Course course : this.electiveCourses){
+            if(!course.getGrade().equals("P")){
+                total += course.getCreds();
+            }
+            if(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("I")){
+                unfulfilled.add(course);
+                unfinishedH += course.getCreds();
+            }
+            else{
+                double a;
+                if(course.getGrade().equals("A") || course.getGrade().equals("A+")){
+                    a = 4.0;
+                }
+                else if(course.getGrade().equals("A-")){
+                    a = 3.67;
+                }
+                else if(course.getGrade().equals("B+")){
+                    a = 3.33;
+                }
+                else if(course.getGrade().equals("B")){
+                    a = 3.0;
+                }
+                else if(course.getGrade().equals("B-")){
+                    a = 3.67;
+                }
+                else if(course.getGrade().equals("A-")){
+                    a = 2.67;
+                }
+                else if(course.getGrade().equals("C+")){
+                    a = 2.33;
+                }
+                else if(course.getGrade().equals("C")){
+                    a = 2.0;
+                }
+                else{
+                    a = 0;
+                }
+                finished += a * course.getCreds();
+            }
+        }
+
+        if(unfinishedH == 0){
+            return "Electives Complete";
+        }
+
+        //System.out.println("Elective Stats:\n\nTotal Points Needed: " + total * 3 + "\nTotal Points from completed: " + finished + "\nCourses found to be unfinished: " + unfulfilled.size() + "\n");
+        double totalpoints = ((3.0 * total) - finished) / unfinishedH;
+        String retElectives = "";
+        for(Course c : unfulfilled){
+            retElectives += c.getPrefix() + " " + c.getNumber() + ", ";
+        }
+        retElectives = retElectives.substring(0, retElectives.length()-2);
+        if(totalpoints <= 2){
+            return ("To maintain a 3.0 elective GPA: the student needs to pass " + retElectives);
+        }
+        return ("To maintain a 3.0 elective GPA: the student needs a GPA >= " + totalpoints + " in " + retElectives);
+    }
+
+    public String outstandingCore(){
+        double total = 0;
+        double finished = 0;
+        double unfinishedH = 0;
+        ArrayList<Course> unfulfilled = new ArrayList<Course>();
+        for(Course course : this.coreCourses){
+            if(!course.getGrade().equals("P")){
+                total += course.getCreds();
+            }
+            if(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("I")){
+                unfulfilled.add(course);
+                unfinishedH += course.getCreds();
+            }
+            else{
+                double a;
+                if(course.getGrade().equals("A") || course.getGrade().equals("A+")){
+                    a = 4.0;
+                }
+                else if(course.getGrade().equals("A-")){
+                    a = 3.67;
+                }
+                else if(course.getGrade().equals("B+")){
+                    a = 3.33;
+                }
+                else if(course.getGrade().equals("B")){
+                    a = 3.0;
+                }
+                else if(course.getGrade().equals("B-")){
+                    a = 3.67;
+                }
+                else if(course.getGrade().equals("A-")){
+                    a = 2.67;
+                }
+                else if(course.getGrade().equals("C+")){
+                    a = 2.33;
+                }
+                else if(course.getGrade().equals("C")){
+                    a = 2.0;
+                }
+                else{
+                    a = 0;
+                }
+                finished += a * course.getCreds();
+            }
+        }
+
+        if(unfinishedH == 0){
+            return "Core Complete.";
+        }
+
+        //System.out.println("Total Points Needed: " + total * 3.19 + "\nTotal Points from completed: " + finished + "\nCourses found to be unfinished: " + unfulfilled.size());
+        double totalpoints = ((3.19 * total) - finished) / unfinishedH;
+        String retCore = "";
+        for(Course c : unfulfilled){
+            retCore += c.getPrefix() + " " + c.getNumber() + ", ";
+        }
+        retCore = retCore.substring(0, retCore.length()-2);
+        if(totalpoints <= 2){
+            return ("To maintain a 3.19 core GPA: the student needs to pass " + retCore);
+        }
+        return ("To maintain a 3.19 core GPA: the student needs a GPA >= " + totalpoints + " in " + retCore);
+    }
+
+    public String outstandingCourses(){
+        double total = 0;
+        double finished = 0;
+        double unfinishedH = 0;
+        ArrayList<Course> unfulfilled = new ArrayList<Course>();
+        for(Course course : this.courses){
+            if(!course.getGrade().equals("P")){
+                total += course.getCreds();
+            }
+            if(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("I")){
+                unfulfilled.add(course);
+                unfinishedH += course.getCreds();
+            }
+            else{
+                double a;
+                if(course.getGrade().equals("A") || course.getGrade().equals("A+")){
+                    a = 4.0;
+                }
+                else if(course.getGrade().equals("A-")){
+                    a = 3.67;
+                }
+                else if(course.getGrade().equals("B+")){
+                    a = 3.33;
+                }
+                else if(course.getGrade().equals("B")){
+                    a = 3.0;
+                }
+                else if(course.getGrade().equals("B-")){
+                    a = 3.67;
+                }
+                else if(course.getGrade().equals("A-")){
+                    a = 2.67;
+                }
+                else if(course.getGrade().equals("C+")){
+                    a = 2.33;
+                }
+                else if(course.getGrade().equals("C")){
+                    a = 2.0;
+                }
+                else{
+                    a = 0;
+                }
+                finished += a * course.getCreds();
+            }
+        }
+
+        if(unfinishedH == 0){
+            return "Courses Complete.";
+        }
+
+        //System.out.println("Total Points Needed: " + total * 3.19 + "\nTotal Points from completed: " + finished + "\nCourses found to be unfinished: " + unfulfilled.size());
+        double totalpoints = ((3.0 * total) - finished) / unfinishedH;
+        String retCore = "";
+        for(Course c : unfulfilled){
+            retCore += c.getPrefix() + " " + c.getNumber() + ", ";
+        }
+        retCore = retCore.substring(0, retCore.length()-2);
+        if(totalpoints <= 2){
+            return ("To maintain a 3.0 GPA: the student needs to pass " + retCore);
+        }
+        return ("To maintain a 3.0 GPA: the student needs a GPA >= " + totalpoints + " in " + retCore);
+    }
+
     public void removeCourse(Course course){
         //Takes a course and removes it from the list of courses a student has taken
         this.courses.remove(course);
