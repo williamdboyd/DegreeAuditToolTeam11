@@ -34,7 +34,7 @@ public class TranscriptReader
             }
             p.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            return null;
         }
         String line;
         String output2 = output;

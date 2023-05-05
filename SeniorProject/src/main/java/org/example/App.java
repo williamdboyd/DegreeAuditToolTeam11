@@ -13,6 +13,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+
+import org.bouncycastle.cert.crmf.ValueDecryptorGenerator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,42 +27,302 @@ public class App
     public static String[] AdmissionLetter;
     public static void main( String[] args )
     {
+      //Creating an empty student to be used
+      Student student = new Student();
       //Creating the list of degree plans
       ArrayList<DegreePlan> degreePlans = initializeDegreePlans();
+      DegreePlan DP = new DegreePlan();
+
       //START OF USER INTERFACING CODE
       Scanner sc = new Scanner(System.in);
       System.out.println("\n\n\n\n\n\n\n\n\nWelcome to the Degree Audit System!");
       boolean invalidInput = true;
 
-      /*while(invalidInput) {
-        System.out.println("Please enter a valid Degree Plan track or enter \'Audit\' to perform a Audit: ");
+      boolean doingAudit = false;
+      boolean doingPlanning = false;
+
+      while(invalidInput) {
+        System.out.println("Please enter \'Planning\' to start a degree plan, or enter \'Audit\' to perform a Audit:");
         String input = sc.nextLine();
         
-        if(input == "Audit") {
-
-        } else if (checkDPforInput(input, degreePlans)) {
-
+        if(input.equals("Audit")) {
+          doingAudit = true;
+          invalidInput = false;
+        } else if (input.equals("Planning")) {
+          doingPlanning = true;
+          invalidInput = false;
         } else {
           System.out.println("Invalid input");
         }
-      }*/
+      }
+      invalidInput = true;
+      while(invalidInput) {
+        System.out.println("Would you like to load a student or create a new one?(Load/Create): ");
+        String input = sc.nextLine();
+        if(input.equals("Load")) {
+          System.out.println("Please enter the full name of the student you would like to load: ");
+          String name = sc.nextLine();
+          student = loadStudent(name, degreePlans);
+          if (student == null) {
+            System.out.println("Student not found");
+          } else{ 
+            student.initializeCourses();
+            invalidInput = false; 
+          }
+        } else if (input.equals("Create")) {
+          System.out.println("Please enter the name of the transcript file you would like to use. EX:(ExampleTranscript.pdf): ");
+          String filePath = sc.nextLine();
+          student = TranscriptReader.parsePDF(filePath);
+          if (student == null) {
+            System.out.println("File not found");
+          } else{ 
+            boolean DPInput = true;
+            System.out.println("Please enter the name of the degree plan you would like to use: ");
+            while(DPInput) {
+              String DPname = sc.nextLine();
+              DP = getDPbyName(DPname, degreePlans);
+              if (DP == null) {
+                System.out.println("Degree Plan not found, please try again: ");
+              } else {
+                student.setDegreePlan(DP);
+                DPInput = false;
+              }
+            }
+            student.initializeCourses();
 
-      Student hold = new Student();
-      hold = TranscriptReader.parsePDF("C.pdf");
+            System.out.println("Pre-Reqs:");
+            for (Course course : student.getPreReqCourses()) {
+              System.out.println(course.toString());
+            }
 
-      hold.initializeCourses();
-      for (Course course : hold.getElectiveCourses()) {
+            invalidInput = false;
+            boolean nestedInput = true;
+            int count = 0;
+            System.out.println(student.getDegreePlan().getDPname() + " requires the following pre-requisites: ");
+            for(Course course : student.getDegreePlan().getPreRequisiteCourses()) {
+              System.out.println(String.valueOf(count) + "." + course.toString());
+              count += 1;
+            }
+            System.out.println("Select Pre-Reqs to be included or leave empty if none. EX:(0,1,3):");
+            while (nestedInput) {
+              String preReqs = sc.nextLine();
+              if(parsePreReqsInput(preReqs, student)) {
+                nestedInput = false;
+              } else {
+                System.out.println("Invalid input, please try again:");
+              }
+            }
+
+            boolean nInput = true;
+            System.out.println("Will this student be fast track, thesis, neither, or both?(Fast/Thesis/Neither/Both):");
+            while(nInput) {
+              String FT = sc.nextLine();
+              if(FT.equals("Fast")) {
+                student.setThesis(false);
+                student.setFastTrack(true);
+                nInput = false;
+              } else if (FT.equals("Thesis")) {
+                student.setThesis(true);
+                student.setFastTrack(false);
+                nInput = false;
+              } else if (FT.equals("Neither")) {
+                student.setFastTrack(false);
+                student.setThesis(false);
+                nInput = false;
+              } else if (FT.equals("Both")) {
+                student.setFastTrack(true);
+                student.setThesis(true);
+                nInput = false;
+              } else {
+                System.out.println("Invalid input, Try again:");
+              }
+            }
+          }
+        } else {
+          System.out.println("Invalid input");
+        }
+      }
+
+      boolean validInput = true;
+      while(validInput) {
+        System.out.println("\nDEGREE PLAN:");
+        System.out.println("Core Classes:");
+        for (Course course : student.getCoreCourses()) {
+          System.out.println(course.toString());
+        }
+  
+        System.out.println("Elective Classes:");
+        for (Course course : student.getElectiveCourses()) {
+          System.out.println(course.toString());
+        }
+  
+        System.out.println("Pre-Reqs:");
+        for (Course course : student.getPreReqCourses()) {
+          System.out.println(course.toString());
+        }
+  
+        System.out.println("Would you like to edit degree plan?(Y/N):");
+        String input = sc.nextLine();
+        if (input.equals("Y")) {
+          boolean nestedInput = true;
+          System.out.println("Would you like to move a course? If not enter Cancel.(Move/Cancel):");
+          while(nestedInput) {
+            String operation = sc.nextLine();
+            if (operation.equals("Add")) {
+              //System.out.println("Please enter the course you would like to add EX:(CS 63** Artificial Intelligence A-) ");
+            } else if (operation.equals("Delete")) {
+              //
+            } else if (operation.equals("Move")) {
+              System.out.println("Please enter the EXISTING course you would like to move EX:(CS 5343 prereq to elective):");
+              boolean doubleNestedInput = true;
+              while(doubleNestedInput) {
+                String moveCourse = sc.nextLine();
+                if(moveCourse.equals("Cancel")) {
+                  doubleNestedInput = false;
+                } else if(student.moveCourse(moveCourse)) {
+                  System.out.println("Course moved successfully");
+                  doubleNestedInput = false;
+                } else {
+                  System.out.println("Invalid input, Try again:");
+                }
+              }
+              nestedInput = false;
+            } else if (operation.equals("Cancel")) {
+              nestedInput = false;
+            } else {
+              System.out.println("Invalid input, Try again:");
+            }
+          }
+        } else if (input.equals("N")) {
+          validInput = false;
+        } else {
+          System.out.println("Invalid input, Try again:");
+        }
+      }
+
+      student.calculateCumGPA();
+      validInput = true;
+      System.out.println("Would you like to save this student?(Y/N):");
+      while(validInput) {
+        String input = sc.nextLine();
+        if (input.equals("Y")) {
+          saveStudent(student, student.getName());
+          validInput = false;
+        } else if (input.equals("N")) {
+          validInput = false;
+        } else {
+          System.out.println("Invalid input, Try again:");
+        }
+      }
+
+      validInput = true;
+
+      System.out.println("Would you like to generate a printable degree plan?(Y/N):");
+      while(validInput) {
+        String input = sc.nextLine();
+        if (input.equals("Y")) {
+          //generateDegreePlanPDF(student);
+          validInput = false;
+        } else if (input.equals("N")) {
+          validInput = false;
+        } else {
+          System.out.println("Invalid input, Try again:");
+        }
+      }
+
+      System.out.println("Would you like to continue Audit?(Y/N):");
+      validInput = true;
+      while(validInput) {
+        String input = sc.nextLine();
+        if (input.equals("Y")) {
+          validInput = false;
+        } else if (input.equals("N")) {
+          System.exit(0);
+        } else {
+          System.out.println("Invalid input, Try again:");
+        }
+      }
+
+      System.out.println("Core GPA: " + String.valueOf(student.getCoreGPA()) + "\nElective GPA: " + String.valueOf(student.getElectiveGPA()) + "\nCumulative GPA: " + String.valueOf(student.getCumulativeGPA()));
+
+      validInput = true;
+      System.out.println("Will the student be taking a extra Elective?(Y/N):");
+      while(validInput) {
+        String input = sc.nextLine();
+        if (input.equals("Y")) {
+          boolean nestedInput = true;
+          System.out.println("Please enter the prefix and the number of the course you would like to add EX:(CS 63** Algorithms): ");
+          while(nestedInput){
+            String courseInput = sc.nextLine();
+            if(parseElectiveInput(courseInput)) {
+
+              String[] inputList = courseInput.split(" ");
+              inputList[0] = inputList[0].toUpperCase();
+              Course elective = new Course(inputList[0], Integer.valueOf(inputList[1]), inputList[2]);
+              student.getElectiveCourses().add(elective);
+              System.out.println("Course added successfully");
+              nestedInput = false;
+            } else {
+              System.out.println("Invalid input, please try again:");
+            }
+          }
+          validInput = false;
+        } else if (input.equals("N")) {
+          validInput = false;
+        } else {
+          System.out.println("Invalid input, try again:");
+        }
+      }
+
+      System.out.println("Will the student be taking additional graduate courses?(Y/N):");
+      validInput = true;
+      while(validInput) {
+        String input = sc.nextLine();
+        if(input.equals("Y")){
+
+        } else if (input.equals("N")) {
+          validInput = false;
+        } else {
+          System.out.println("Invalid input, try again:");
+        }
+      }
+
+      ArrayList<Course> DisposedPreReqs = new ArrayList<Course>();
+      for (Course REQcourse : student.getDegreePlan().getPreRequisiteCourses()) {
+        boolean contains = false;
+        for (Course course : student.getPreReqCourses()) {
+          if ((course.getPrefix().equals(REQcourse.getPrefix()) && (course.getNumber() == REQcourse.getNumber()))) {
+            contains = true;
+          }
+        }
+        if(!contains) {
+          DisposedPreReqs.add(REQcourse);
+        }
+      }
+
+      for (Course course: DisposedPreReqs) {
         System.out.println(course.toString());
       }
 
-      saveStudent(hold, hold.getName());
-      hold = loadStudent(hold.getName());
-
-      try {
-        createAudit(hold);
-      } catch(IOException e) {
-        System.out.println("Couldn't create Audit");
+      System.out.println("Would you like to generate and save a printable audit?(Y/N):");
+      validInput = true;
+      while(validInput) {
+        String input = sc.nextLine();
+        if(input.equals("Y")) {
+          try {
+            createAudit(student);
+          } catch(IOException e) {
+            System.out.println("Couldn't create Audit");
+          }
+          validInput = false;
+        } else if (input.equals("N")){
+          validInput = false;
+        } else {
+          System.out.println("Invalid input, try again:");
+        }
       }
+
+      sc.close();
     }
 
     //Saves the student object as a file in the savedStudents folder
@@ -81,7 +344,7 @@ public class App
     }
 
     //Loads a student object from a file in the savedStudents folder
-    public static Student loadStudent(String fileName) {
+    public static Student loadStudent(String fileName, ArrayList<DegreePlan> DP) {
         Student student = new Student();
         ArrayList<Course> courses = new ArrayList<Course>();
         File myFile = new File("savedStudents\\" + fileName + ".txt");
@@ -91,6 +354,8 @@ public class App
           student.setName(sc.nextLine().substring(14));
           student.setID(Integer.parseInt(sc.nextLine().substring(12)));
           student.setProgram(sc.nextLine().substring(9));
+          String DPName = sc.nextLine().substring(13);
+          student.setDegreePlan(getDPbyName(DPName, DP));
           student.setMajor(sc.nextLine().substring(7));
           student.setSpecialization(sc.nextLine().substring(16));
           student.setAdmittedDate(sc.nextLine().substring(15));
@@ -106,7 +371,7 @@ public class App
             String line = sc.nextLine();
             if(line != ""){
               String[] lineArray = line.split(", ");
-              Course course = new Course(lineArray[0].substring(14), lineArray[1].substring(7), Integer.parseInt(lineArray[2].substring(7)), lineArray[3].substring(6), lineArray[4].substring(12), lineArray[5].substring(11), Double.parseDouble(lineArray[6].substring(8, lineArray[6].length() - 1)));
+              Course course = new Course(lineArray[0].substring(23), lineArray[1].substring(7), Integer.parseInt(lineArray[2].substring(7)), lineArray[3].substring(6), lineArray[4].substring(12), lineArray[5].substring(11), Double.parseDouble(lineArray[6].substring(8, lineArray[6].length() - 1)));
               courses.add(course);
             }
           }
@@ -115,6 +380,7 @@ public class App
           System.out.println("Successfully loaded student.");
         } catch(IOException e) {
           System.out.println("Couldn't find file.");
+          return null;
         }
 
         return student;
@@ -141,7 +407,7 @@ public class App
         //Creating the General Student Info
         document.add(createParagraphWithTab("Name: ","ID: ", student.getName(), student.getID().toString()));
         document.add(createParagraphWithTab("Plan: ","Major: ", student.getProgram(), student.getMajor()));
-        document.add(createParagraphWithTab("","Track: ", "", student.getSpecialization()));
+        document.add(createParagraphWithTab("","Track: ", "", student.getDegreePlan().getDPname()));
 
         //Creating the GPA Info
         document.add(new Paragraph("\n"));
@@ -229,15 +495,61 @@ public class App
     }
 
     public static boolean checkDPforInput(String input, ArrayList<DegreePlan> degreePlans) {
+      for (DegreePlan degreePlan : degreePlans) {
+        if (degreePlan.getDPname().equals(input))
+          return true;
+      }
       return false;
     }
+
+    public static DegreePlan getDPbyName(String input, ArrayList<DegreePlan> degreePlans) {
+      for (DegreePlan degreePlan : degreePlans) {
+        if (degreePlan.getDPname().equals(input))
+          return degreePlan;
+      }
+      return null;
+    }
+
+    public static boolean parseElectiveInput(String input) {
+      try {
+        String[] inputList = input.split(" ");
+        inputList[0] = inputList[0].toUpperCase();
+        if((inputList[0].equals("CS") || inputList[0].equals("SE")) && (Integer.valueOf(inputList[1]) > 5000 && Integer.valueOf(inputList[1]) < 7000))
+          return true;
+        else 
+          return false;
+
+      } catch (Exception e) {
+        return false;
+      }
+    }
+    public static boolean parsePreReqsInput(String input, Student student) {
+      if(input.equals("")) {
+        ArrayList<Course> empty = new ArrayList<Course>();
+        student.getDegreePlan().setPreRequisiteCourses(empty);
+        return true;
+      }
+      try {
+        String[] preReqs = input.split(",");
+        ArrayList<Course> coursesToKeep = new ArrayList<Course>();
+        for (String preReq : preReqs) {
+          int position = Integer.valueOf(preReq);
+          coursesToKeep.add(student.getDegreePlan().getPreRequisiteCourses().get(position));
+        }
+        student.getDegreePlan().setPreRequisiteCourses(coursesToKeep);
+        return true;
+      } catch (Exception e) {
+        return false;
+      }
+    }
+
 
     //Initializes the list of all Degree Plans and returns it
     public static ArrayList<DegreePlan> initializeDegreePlans() {
       ArrayList<DegreePlan> degreePlans = new ArrayList<DegreePlan>();
 
       //Initializing the Degree Plans
-      DegreePlan SoftwareEngineering = new DegreePlan("SoftwareEngineering", setSECoreCourses(), 15.0, setSEpreReq());
+      DegreePlan SoftwareEngineering = new DegreePlan("Software Engineering", setSECoreCourses(), 15.0, setSEpreReq());
       DegreePlan DataScience = new DegreePlan("Data Science", setDSCoreCourses(), 15.0, setDSpreReq());
       DegreePlan Systems = new DegreePlan("Systems", setSysCoreCourses(), 15.0, setSyspreReq());
       DegreePlan CyberSecurity = new DegreePlan("Cyber Security", setCyberCoreCourses(), 12.0, setCyberpreReq());
