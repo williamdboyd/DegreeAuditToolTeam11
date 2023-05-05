@@ -69,7 +69,7 @@ public class Student {
 
     //toString method
     public String toString() {
-        String student = "Student Name: " + name + "\nStudent ID: " + id + "\nProgram: " + program + "\nMajor: " + major + "\nSpecialization: " + specialization + "\nAdmitted Date: " + admittedDate + "\nAnticipated Graduation: " + anticipatedGraduation + "\nFast Track: " + fastTrack + "\nThesis: " + thesis + "\nCumulative GPA: " + cumulativeGPA + "\nCore GPA: " + coreGPA + "\nElective GPA: " + electiveGPA + "\nAcademic Standing: " + academicStanding + "\nGraduation Status: " + graduationStatus + "\n";
+        String student = "Student Name: " + name + "\nStudent ID: " + id + "\nProgram: " + program + "\nDegree Plan: " + degreePlan.getDPname() + "\nMajor: " + major + "\nSpecialization: " + specialization + "\nAdmitted Date: " + admittedDate + "\nAnticipated Graduation: " + anticipatedGraduation + "\nFast Track: " + fastTrack + "\nThesis: " + thesis + "\nCumulative GPA: " + cumulativeGPA + "\nCore GPA: " + coreGPA + "\nElective GPA: " + electiveGPA + "\nAcademic Standing: " + academicStanding + "\nGraduation Status: " + graduationStatus + "\n";
         for (Course course : courses) {
             student += course.fulltoString() + "\n";
         }
@@ -79,12 +79,19 @@ public class Student {
     public ArrayList<Course> checkCoreCourses(ArrayList<Course> passCoreReqs) {
         //Takes the list of courses a student has taken and compares them to the list of core courses
         ArrayList<Course> coreReqs = new ArrayList<Course>(passCoreReqs);
+        ArrayList<Course> copyCoreCourses = new ArrayList<Course>();
         this.coreCourses = new ArrayList<Course>();
         for (Course course : courses) {
             for (Course coreReq : passCoreReqs) {
                 if (course.isEqual(coreReq)) {
                     coreReqs.remove(coreReq);
+                    for (Course coreCourse : copyCoreCourses) {
+                        if (course.isEqual(coreCourse)) {
+                            this.coreCourses.remove(coreCourse);
+                        }
+                    }
                     this.coreCourses.add(course);
+                    copyCoreCourses = new ArrayList<Course>(coreCourses);
                 }
             }
         }
