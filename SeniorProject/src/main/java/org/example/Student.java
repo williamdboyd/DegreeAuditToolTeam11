@@ -69,7 +69,7 @@ public class Student {
 
     //toString method
     public String toString() {
-        String student = "Student Name: " + name + "\nStudent ID: " + id + "\nProgram: " + program + "\nMajor: " + major + "\nSpecialization: " + specialization + "\nAdmitted Date: " + admittedDate + "\nAnticipated Graduation: " + anticipatedGraduation + "\nFast Track: " + fastTrack + "\nThesis: " + thesis + "\nCumulative GPA: " + cumulativeGPA + "\nCore GPA: " + coreGPA + "\nElective GPA: " + electiveGPA + "\nAcademic Standing: " + academicStanding + "\nGraduation Status: " + graduationStatus + "\n";
+        String student = "Student Name: " + name + "\nStudent ID: " + id + "\nProgram: " + program + "\nDegree Plan: " + degreePlan.getDPname() + "\nMajor: " + major + "\nSpecialization: " + specialization + "\nAdmitted Date: " + admittedDate + "\nAnticipated Graduation: " + anticipatedGraduation + "\nFast Track: " + fastTrack + "\nThesis: " + thesis + "\nCumulative GPA: " + cumulativeGPA + "\nCore GPA: " + coreGPA + "\nElective GPA: " + electiveGPA + "\nAcademic Standing: " + academicStanding + "\nGraduation Status: " + graduationStatus + "\n";
         for (Course course : courses) {
             student += course.fulltoString() + "\n";
         }
@@ -79,12 +79,19 @@ public class Student {
     public ArrayList<Course> checkCoreCourses(ArrayList<Course> passCoreReqs) {
         //Takes the list of courses a student has taken and compares them to the list of core courses
         ArrayList<Course> coreReqs = new ArrayList<Course>(passCoreReqs);
+        ArrayList<Course> copyCoreCourses = new ArrayList<Course>();
         this.coreCourses = new ArrayList<Course>();
         for (Course course : courses) {
             for (Course coreReq : passCoreReqs) {
                 if (course.isEqual(coreReq)) {
                     coreReqs.remove(coreReq);
+                    for (Course coreCourse : copyCoreCourses) {
+                        if (course.isEqual(coreCourse)) {
+                            this.coreCourses.remove(coreCourse);
+                        }
+                    }
                     this.coreCourses.add(course);
+                    copyCoreCourses = new ArrayList<Course>(coreCourses);
                 }
             }
         }
@@ -149,23 +156,189 @@ public class Student {
 
 
     public void calculateCumGPA() {
-    
+        calculateCoreGPA();
+        calculateElectiveGPA();
+        double pre = calculatePreReqGPA();
+        double c = 0;
+        double e = 0;
+        double p = 0;
+        for(Course course : this.coreCourses){
+            if(!(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I"))){
+                c += course.getCreds();
+            }
+        }
+        for(Course course : this.electiveCourses){
+            if(!(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I"))){
+                e += course.getCreds();
+            }
+        }
+        for(Course course : this.preReqCourses){
+            if(!(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I"))){
+                p += course.getCreds();
+            }
+        }
+        System.out.println("P is " + p);
+        cumulativeGPA = ((c * coreGPA) + (e * electiveGPA) + (p * pre)) / (e + c + p);
+        System.out.println("Cumulative GPA is: " + cumulativeGPA);
     }
 
     public void calculateCoreGPA() {
         //Takes the list of core courses a student has taken and calculates their core GPA
         //Only works after checkCoreCourses() has been called
+        int count = 0;
+        this.coreGPA = 0;
+        System.out.println("grade calc start");
         for(Course course: coreCourses){
-            this.coreGPA += course.getCreds();
+            System.out.println(course.fulltoString());
+            double a = 0;
+            count += course.getCreds();
+            if(course.getGrade().equals("A") || course.getGrade().equals("A+")){
+                a = 4.0;
+            }
+            else if(course.getGrade().equals("A-")){
+                a = 3.67;
+            }
+            else if(course.getGrade().equals("B+")){
+                a = 3.33;
+            }
+            else if(course.getGrade().equals("B")){
+                a = 3.0;
+            }
+            else if(course.getGrade().equals("B-")){
+                a = 3.67;
+            }
+            else if(course.getGrade().equals("A-")){
+                a = 2.67;
+            }
+            else if(course.getGrade().equals("C+")){
+                a = 2.33;
+            }
+            else if(course.getGrade().equals("C")){
+                a = 2.0;
+            }
+            else if(course.getGrade().equals("F")){
+                a = 0;
+            }
+            else if(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I")){
+                count -= course.getCreds();
+            }
+            else{
+                System.out.println("Invalid Letter Grade");
+                count -= course.getCreds();
+            }
+            this.coreGPA += course.getCreds() * a;
         }
+        if(count != 0){
+            this.coreGPA = this.coreGPA / count;
+        }
+        System.out.println("Core GPA Calc: " + this.coreGPA);
     }
 
     public void calculateElectiveGPA() {
         //Takes the list of elective courses a student has taken and calculates their elective GPA
         //Only works after checkElectiveCourses() has been called
+        int count = 0;
+        this.electiveGPA = 0;
+        System.out.println("grade calc start");
         for(Course course: electiveCourses){
-            this.electiveGPA += course.getCreds();
+            //System.out.println(course.getGrade());
+            System.out.println(course.fulltoString());
+            double a = 0;
+            count += course.getCreds();
+            if(course.getGrade().equals("A") || course.getGrade().equals("A+")){
+                a = 4;
+            }
+            else if(course.getGrade().equals("A-")){
+                a = 3.67;
+            }
+            else if(course.getGrade().equals("B+")){
+                a = 3.33;
+            }
+            else if(course.getGrade().equals("B")){
+                a = 3.0;
+            }
+            else if(course.getGrade().equals("B-")){
+                a = 3.67;
+            }
+            else if(course.getGrade().equals("A-")){
+                a = 2.67;
+            }
+            else if(course.getGrade().equals("C+")){
+                a = 2.33;
+            }
+            else if(course.getGrade().equals("C")){
+                a = 2.0;
+            }
+            else if(course.getGrade().equals("F")){
+                a = 0;
+            }
+            else if(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I")){
+                count -= course.getCreds();
+            }
+            else{
+                System.out.println("Invalid Letter Grade");
+                count -= course.getCreds();
+            }
+            this.electiveGPA += course.getCreds() * a;
         }
+        if(count != 0){
+            this.electiveGPA = this.electiveGPA / count;
+        }
+        System.out.println("Elective GPA Calc: " + this.electiveGPA);
+    }
+
+    public double calculatePreReqGPA() {
+        //Takes the list of core courses a student has taken and calculates their core GPA
+        //Only works after checkCoreCourses() has been called
+        int count = 0;
+        double ret = 0;
+        System.out.println("grade calc start");
+        for(Course course: preReqCourses){
+            System.out.println(course.fulltoString());
+            double a = 0;
+            count += course.getCreds();
+            if(course.getGrade().equals("A") || course.getGrade().equals("A+")){
+                a = 4.0;
+            }
+            else if(course.getGrade().equals("A-")){
+                a = 3.67;
+            }
+            else if(course.getGrade().equals("B+")){
+                a = 3.33;
+            }
+            else if(course.getGrade().equals("B")){
+                a = 3.0;
+            }
+            else if(course.getGrade().equals("B-")){
+                a = 3.67;
+            }
+            else if(course.getGrade().equals("A-")){
+                a = 2.67;
+            }
+            else if(course.getGrade().equals("C+")){
+                a = 2.33;
+            }
+            else if(course.getGrade().equals("C")){
+                a = 2.0;
+            }
+            else if(course.getGrade().equals("F")){
+                a = 0;
+            }
+            else if(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I")){
+                count -= course.getCreds();
+            }
+            else{
+                System.out.println("Invalid Letter Grade");
+                count -= course.getCreds();
+            }
+            ret += course.getCreds() * a;
+        }
+        if(count == 0){
+            return 0;
+        }
+        ret = ret / count;
+        System.out.println("PreReq GPA count: " + ret);
+        return ret;
     }
 
     public void removeCourse(Course course){
