@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 
-public class TranscriptReader 
+public class TranscriptReader
 {
     public static Student parsePDF(String file){
         String output = "";
@@ -21,7 +21,7 @@ public class TranscriptReader
             while(true){
                 try {
                     textFromPage = PdfTextExtractor.getTextFromPage(p, count);
-            
+
                     //System.out.println(textFromPage);
                     output = output + textFromPage;
                     count++;
@@ -50,9 +50,9 @@ public class TranscriptReader
 
         for(int i=0; i < output.length(); i++)
         {    if(output.charAt(i) == '\n')
-                countL++;
+            countL++;
         }
-        
+
         for(int i = 0; i < countL; i++){
             line = output2.substring(0, output2.indexOf("\n"));
             output2 = output2.substring(output2.indexOf("\n") + 1);
@@ -132,7 +132,10 @@ public class TranscriptReader
         ret.setDescription(line.substring(0, hh - 1));
         //System.out.println(ret.getDescription() + " is desc");
         line = line.substring(hh);
-        ret.setCreds(Float.parseFloat(line.substring(0, 5)));
+        String creds = String.valueOf(ret.getNumber());
+        creds = creds.substring(1,2);
+        int credits = Integer.parseInt(creds);
+        ret.setCreds(Double.valueOf(credits));
         //System.out.println(ret.getCreds());
         hh = 0;
         h = '0';

@@ -17,10 +17,10 @@ import java.awt.*;
 import java.io.FileNotFoundException;
 
 public class Main {
-    public static final String[][] DATA = {
-            {"Taylor Swift", "2021012398"},
-            {"Master", "Computer Science"},
-            {"", "Data Science"}
+    public static final String[] DATA = {
+            "Taylor Swift", "2021012398",
+            "Master", "Computer Science",
+            "Data Science"
     };
 
     public static final String[] GPA_Data = {
@@ -55,9 +55,9 @@ public class Main {
         document.add(heading);
 
         //Creating the General Student Info
-        document.add(createParagraphWithTab("Name: ","ID: ", DATA[0][0], DATA[0][1]));
-        document.add(createParagraphWithTab("Plan: ","Major: ", DATA[1][0], DATA[1][1]));
-        document.add(createParagraphWithTab("","Track: ", DATA[2][0], DATA[2][1]));
+        document.add(createParagraphWithTab("Name: ","ID: ", DATA[0], DATA[1]));
+        document.add(createParagraphWithTab("Plan: ","Major: ", DATA[2], DATA[3]));
+        document.add(createParagraphWithTab("","Track: ", "", DATA[4]));
 
         //Creating the GPA Info
         document.add(new Paragraph("\n"));
@@ -78,7 +78,16 @@ public class Main {
 
         //Outstanding Requirements
         document.add(new Paragraph("\n"));
-        document.add(new Paragraph("Outstanding Requirements").setBold());
+        document.add(new Paragraph("Outstanding Requirements: ").setBold());
+        document.add(new Paragraph("\n"));
+
+        document.add(new Paragraph("Core completed"));
+        document.add(new Paragraph("To maintain a 3.0 elective GPA: "));
+        Paragraph req = new Paragraph().add(new Tab());
+        document.add(req.add("The student must pass: "));
+        document.add(new Paragraph("To maintain a 3.0 overall GPA: "));
+        Paragraph req2 = new Paragraph().add(new Tab());
+        document.add(req2.add("The student must pass: "));
 
 
 
