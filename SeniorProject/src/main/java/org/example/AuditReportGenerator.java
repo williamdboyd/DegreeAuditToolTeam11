@@ -1,22 +1,18 @@
 package org.example;
 
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.geom.Line;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.canvas.parser.listener.TextChunk;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.borders.Border;
-import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Tab;
+import com.itextpdf.layout.element.TabStop;
+import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.TabAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
-import com.itextpdf.layout.properties.UnitValue;
 
-import javax.swing.text.StyleConstants;
-import java.awt.*;
 import java.io.FileNotFoundException;
 
-public class Main {
+public class AuditReportGenerator {
     public static final String[] DATA = {
             "Taylor Swift", "2021012398",
             "Master", "Computer Science",
@@ -37,7 +33,7 @@ public class Main {
 
     public static String[] AdmissionLetter;
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public AuditReportGenerator(String[] DATA, String[] GPA_Data, String[] Core_Courses, String[] Electives) throws FileNotFoundException {
         String path = "f:\\FirstPdf.pdf";
         PdfWriter pdfWriter = new PdfWriter(path);
         PdfDocument pdfDocument = new PdfDocument(pdfWriter);
