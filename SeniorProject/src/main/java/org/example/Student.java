@@ -200,18 +200,24 @@ public class Student {
         double e = 0;
         double p = 0;
         for(Course course : this.coreCourses){
-            if(!(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I"))){
-                c += course.getCreds();
+            if(course.getGrade() != null) {
+                if(!(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I"))){
+                    c += course.getCreds();
+                }
             }
         }
         for(Course course : this.electiveCourses){
-            if(!(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I"))){
-                e += course.getCreds();
+            if(course.getGrade() != null) {
+                if(!(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I"))){
+                    e += course.getCreds();
+                }
             }
         }
         for(Course course : this.preReqCourses){
-            if(!(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I"))){
-                p += course.getCreds();
+            if(course.getGrade() != null) {
+                if(!(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I"))){
+                    p += course.getCreds();
+                }
             }
         }
         cumulativeGPA = ((c * coreGPA) + (e * electiveGPA) + (p * pre)) / (e + c + p);
@@ -281,41 +287,43 @@ public class Student {
             //System.out.println(course.fulltoString());
             double a = 0;
             count += course.getCreds();
-            if(course.getGrade().equals("A") || course.getGrade().equals("A+")){
-                a = 4;
+            if(course.getGrade() != null) { 
+                if(course.getGrade().equals("A") || course.getGrade().equals("A+")){
+                    a = 4;
+                }
+                else if(course.getGrade().equals("A-")){
+                    a = 3.67;
+                }
+                else if(course.getGrade().equals("B+")){
+                    a = 3.33;
+                }
+                else if(course.getGrade().equals("B")){
+                    a = 3.0;
+                }
+                else if(course.getGrade().equals("B-")){
+                    a = 3.67;
+                }
+                else if(course.getGrade().equals("A-")){
+                    a = 2.67;
+                }
+                else if(course.getGrade().equals("C+")){
+                    a = 2.33;
+                }
+                else if(course.getGrade().equals("C")){
+                    a = 2.0;
+                }
+                else if(course.getGrade().equals("F")){
+                    a = 0;
+                }
+                else if(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I")){
+                    count -= course.getCreds();
+                }
+                else{
+                    //System.out.println("Invalid Letter Grade");
+                    count -= course.getCreds();
+                }
+                this.electiveGPA += course.getCreds() * a;
             }
-            else if(course.getGrade().equals("A-")){
-                a = 3.67;
-            }
-            else if(course.getGrade().equals("B+")){
-                a = 3.33;
-            }
-            else if(course.getGrade().equals("B")){
-                a = 3.0;
-            }
-            else if(course.getGrade().equals("B-")){
-                a = 3.67;
-            }
-            else if(course.getGrade().equals("A-")){
-                a = 2.67;
-            }
-            else if(course.getGrade().equals("C+")){
-                a = 2.33;
-            }
-            else if(course.getGrade().equals("C")){
-                a = 2.0;
-            }
-            else if(course.getGrade().equals("F")){
-                a = 0;
-            }
-            else if(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I")){
-                count -= course.getCreds();
-            }
-            else{
-                //System.out.println("Invalid Letter Grade");
-                count -= course.getCreds();
-            }
-            this.electiveGPA += course.getCreds() * a;
         }
         if(count != 0){
             this.electiveGPA = this.electiveGPA / count;
@@ -333,41 +341,43 @@ public class Student {
             //System.out.println(course.fulltoString());
             double a = 0;
             count += course.getCreds();
-            if(course.getGrade().equals("A") || course.getGrade().equals("A+")){
-                a = 4.0;
+            if(course.getGrade() != null) {
+                if(course.getGrade().equals("A") || course.getGrade().equals("A+")){
+                    a = 4.0;
+                }
+                else if(course.getGrade().equals("A-")){
+                    a = 3.67;
+                }
+                else if(course.getGrade().equals("B+")){
+                    a = 3.33;
+                }
+                else if(course.getGrade().equals("B")){
+                    a = 3.0;
+                }
+                else if(course.getGrade().equals("B-")){
+                    a = 3.67;
+                }
+                else if(course.getGrade().equals("A-")){
+                    a = 2.67;
+                }
+                else if(course.getGrade().equals("C+")){
+                    a = 2.33;
+                }
+                else if(course.getGrade().equals("C")){
+                    a = 2.0;
+                }
+                else if(course.getGrade().equals("F")){
+                    a = 0;
+                }
+                else if(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I")){
+                    count -= course.getCreds();
+                }
+                else{
+                    //System.out.println("Invalid Letter Grade");
+                    count -= course.getCreds();
+                }
+                ret += course.getCreds() * a;
             }
-            else if(course.getGrade().equals("A-")){
-                a = 3.67;
-            }
-            else if(course.getGrade().equals("B+")){
-                a = 3.33;
-            }
-            else if(course.getGrade().equals("B")){
-                a = 3.0;
-            }
-            else if(course.getGrade().equals("B-")){
-                a = 3.67;
-            }
-            else if(course.getGrade().equals("A-")){
-                a = 2.67;
-            }
-            else if(course.getGrade().equals("C+")){
-                a = 2.33;
-            }
-            else if(course.getGrade().equals("C")){
-                a = 2.0;
-            }
-            else if(course.getGrade().equals("F")){
-                a = 0;
-            }
-            else if(course.getGrade().equals("W") || course.getGrade().equals("none") || course.getGrade().equals("P") || course.getGrade().equals("I")){
-                count -= course.getCreds();
-            }
-            else{
-                //System.out.println("Invalid Letter Grade");
-                count -= course.getCreds();
-            }
-            ret += course.getCreds() * a;
         }
         if(count == 0){
             return 0;
@@ -691,6 +701,9 @@ public class Student {
     }
     public List<Course> getPreReqCourses() {
         return preReqCourses;
+    }
+    public void setPreReqCourses(List<Course> preReqCourses) {
+        this.preReqCourses = preReqCourses;
     }
     public String getAcademicStanding() {
         return academicStanding;

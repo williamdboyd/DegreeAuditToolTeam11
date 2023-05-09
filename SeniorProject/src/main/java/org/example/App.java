@@ -14,8 +14,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-import org.bouncycastle.cert.crmf.ValueDecryptorGenerator;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +30,9 @@ public class App
       //Creating the list of degree plans
       ArrayList<DegreePlan> degreePlans = initializeDegreePlans();
       DegreePlan DP = new DegreePlan();
+      //List of Leveling/Pre-Reqs
+      ArrayList<Course> levelingCourses = initalizeLevelingCourses();
+      
 
       //START OF USER INTERFACING CODE
       Scanner sc = new Scanner(System.in);
@@ -88,30 +89,15 @@ public class App
                 DPInput = false;
               }
             }
+           // System.out.println("Before init student Courses: ");
             student.initializeCourses();
-
-            System.out.println("Pre-Reqs:");
+           // System.out.println("After init sutdent courses:" + DP.getCoreCourses().toString());
+            System.out.println("Pre-Reqs Chosen:");
             for (Course course : student.getPreReqCourses()) {
               System.out.println(course.toString());
             }
 
             invalidInput = false;
-            boolean nestedInput = true;
-            int count = 0;
-            System.out.println(student.getDegreePlan().getDPname() + " requires the following pre-requisites: ");
-            for(Course course : student.getDegreePlan().getPreRequisiteCourses()) {
-              System.out.println(String.valueOf(count) + "." + course.toString());
-              count += 1;
-            }
-            System.out.println("Select Pre-Reqs to be included or leave empty if none. EX:(0,1,3):");
-            while (nestedInput) {
-              String preReqs = sc.nextLine();
-              if(parsePreReqsInput(preReqs, student)) {
-                nestedInput = false;
-              } else {
-                System.out.println("Invalid input, please try again:");
-              }
-            }
 
             boolean nInput = true;
             System.out.println("Will this student be fast track, thesis, neither, or both?(Fast/Thesis/Neither/Both):");
@@ -141,6 +127,23 @@ public class App
         } else {
           System.out.println("Invalid input");
         }
+        boolean nestedInput = true;
+            int count = 0;
+            System.out.println("The following is a list of Pre-Req or leveling courses: ");
+
+            for(Course course : levelingCourses) {
+              System.out.println(String.valueOf(count) + "." + course.toString());
+              count += 1;
+            }
+            System.out.println("Select Pre-Reqs to be included or leave empty if none. EX:(0,1,3):");
+            while (nestedInput) {
+              String preReqs = sc.nextLine();
+              if(parsePreReqsInput(preReqs, student, levelingCourses)) {
+                nestedInput = false;
+              } else {
+                System.out.println("Invalid input, please try again:");
+              }
+            }
       }
 
       boolean validInput = true;
@@ -171,7 +174,7 @@ public class App
             if (operation.equals("Add")) {
               //System.out.println("Please enter the course you would like to add EX:(CS 63** Artificial Intelligence A-) ");
             } else if (operation.equals("Delete")) {
-              //
+              //System.out.println("Please enter the course you would like to delete EX:(CS 63** Artificial Intelligence A-) ");
             } else if (operation.equals("Move")) {
               System.out.println("Please enter the EXISTING course you would like to move EX:(CS 5343 prereq to elective):");
               boolean doubleNestedInput = true;
@@ -221,7 +224,7 @@ public class App
       while(validInput) {
         String input = sc.nextLine();
         if (input.equals("Y")) {
-          //generateDegreePlanPDF(student);
+          //generateDegreePlanPDF(student, student.degreePlan);
           validInput = false;
         } else if (input.equals("N")) {
           validInput = false;
@@ -301,9 +304,19 @@ public class App
         }
       }
 
-      for (Course course: DisposedPreReqs) {
-        System.out.println(course.toString());
+      student.calculateCumGPA();
+      System.out.println("Core GPA: " + String.valueOf(student.getCoreGPA()) + "\nElective GPA: " + String.valueOf(student.getElectiveGPA()) + "\nCumulative GPA: " + String.valueOf(student.getCumulativeGPA()));
+
+
+
+      //Setting Disposition for the list of leveling/pre-req courses
+      System.out.println("Please set the disposition of all the uncompleted pre-reqs");
+      for (Course course: student.getPreReqCourses()) {
+        System.out.println("What is the disposition of " + course.toString() + "?");
+        String input = sc.nextLine();
+        course.setDescription(input);
       }
+      
 
       System.out.println("Would you like to generate and save a printable audit?(Y/N):");
       validInput = true;
@@ -389,49 +402,103 @@ public class App
 
     //Function for creating Audit
     public static void createAudit(Student passStudent) throws FileNotFoundException {
-        Student student = passStudent;
-        String path = "FirstPdf.pdf";
-        PdfWriter pdfWriter = new PdfWriter(path);
-        PdfDocument pdfDocument = new PdfDocument(pdfWriter);
-        pdfDocument.addNewPage();
-        Document document = new Document(pdfDocument);
+      Student student = passStudent;
+      String path = "_Audit.pdf";
+      path = student.getName() + path;
+      PdfWriter pdfWriter = new PdfWriter(path);
+      PdfDocument pdfDocument = new PdfDocument(pdfWriter);
+      pdfDocument.addNewPage();
+      Document document = new Document(pdfDocument);
 
-        //Creating Title of the PDF
-        Paragraph heading = new Paragraph();
-        Text title = new Text("Audit Report");
-        heading.add(title);
-        heading.setTextAlignment(TextAlignment.CENTER); // aligning to the Center
-        heading.setBold();
-        heading.setFontSize(16);
-        document.add(heading);
+      //Creating Title of the PDF
+      Paragraph heading = new Paragraph();
+      Text title = new Text("Audit Report");
+      heading.add(title);
+      heading.setTextAlignment(TextAlignment.CENTER); // aligning to the Center
+      heading.setBold();
+      heading.setFontSize(16);
+      document.add(heading);
 
-        //Creating the General Student Info
-        document.add(createParagraphWithTab("Name: ","ID: ", student.getName(), student.getID().toString()));
-        document.add(createParagraphWithTab("Plan: ","Major: ", student.getProgram(), student.getMajor()));
-        document.add(createParagraphWithTab("","Track: ", "", student.getDegreePlan().getDPname()));
+      //Creating the General Student Info
+      document.add(createParagraphWithTab("Name: ","ID: ", student.getName(), student.getID().toString()));
+      document.add(createParagraphWithTab("Plan: ","Major: ", student.getProgram(), student.getMajor()));
+      document.add(createParagraphWithTab("","Track: ", "", student.getDegreePlan().getDPname()));
 
-        //Creating the GPA Info
-        document.add(new Paragraph("\n"));
-        document.add(createDataEntry("Core GPA: ", String.valueOf(student.getCoreGPA())));
-        document.add(createDataEntry("Elective GPA: ",String.valueOf(student.getElectiveGPA())));
-        document.add(createDataEntry("Combined GPA: ",String.valueOf(student.getCumulativeGPA())));
+      //Creating the GPA Info
+      document.add(new Paragraph("\n"));
+      document.add(createDataEntry("Core GPA: ", String.valueOf(student.getCoreGPA())));
+      document.add(createDataEntry("Elective GPA: ",String.valueOf(student.getElectiveGPA())));
+      document.add(createDataEntry("Combined GPA: ",String.valueOf(student.getCumulativeGPA())));
 
-        //Display the Courses
-        document.add(new Paragraph("\n"));
-        document.add(displayCourses("Core",student.getCoreCourses()));
-        document.add(displayCourses("Elective", student.getElectiveCourses()));
+      //Display the Courses
+      document.add(new Paragraph("\n"));
+      document.add(displayCourses("Core",student.getCoreCourses()));
+      document.add(displayCourses("Elective", student.getElectiveCourses()));
 
-        //Pre-Req
-        document.add(new Paragraph("\n"));
+      //Pre-Req
+      document.add(new Paragraph("\n"));
 
-        document.add(new Paragraph().add(new Text("Leveling Courses and Pre-requisites from Admission Letter:").setBold()));
-        document.add(diplayAdmissionLetter(AdmissionLetter));
+      document.add(new Paragraph().add(new Text("Leveling Courses and Pre-requisites from Admission Letter:").setBold()));
+      for (Course course : student.getPreReqCourses()) {
+        document.add(new Paragraph(course.toString()));
+      }
 
-        //Outstanding Requirements
-        document.add(new Paragraph("\n"));
-        document.add(new Paragraph("Outstanding Requirements").setBold());
+      //Outstanding Requirements
+      document.add(new Paragraph("\n"));
+      document.add(new Paragraph("Outstanding Requirements").setBold());
+      
+      String outstandingCore = student.outstandingCore();
+      String outstandingElectives = student.outstandingElectives();
+      String outstandingCourses = student.outstandingCourses();
+      
+      int pos = outstandingCore.indexOf(":", 0);
+      String firstCore = "";
+      String secondCore = "";
 
+      if (pos != -1) {
+        firstCore = outstandingCore.substring(0, pos+1);
+        secondCore = outstandingCore.substring(pos+1, outstandingCore.length());
+        secondCore = "\t" + secondCore;
+        document.add(new Paragraph(firstCore));
+        Paragraph sC = new Paragraph();
+        sC.add(new Tab());
+        sC.add(secondCore);
+        document.add(sC);
+      } else {
+        document.add(new Paragraph(outstandingCore));
+      }
 
+      pos = outstandingElectives.indexOf(":", 0);
+      String firstElectives = "";
+      String secondElectives = "";
+      if (pos != -1) {
+        firstElectives = outstandingElectives.substring(0, pos+1);
+        secondElectives = outstandingElectives.substring(pos+1, outstandingElectives.length());
+        secondElectives = "\t" + secondElectives;
+        document.add(new Paragraph(firstElectives));
+        Paragraph sE = new Paragraph();
+        sE.add(new Tab());
+        sE.add(secondElectives);
+        document.add(sE);
+      } else {
+        document.add(new Paragraph(outstandingElectives));
+      }
+
+      pos = outstandingCourses.indexOf(":", 0);
+      String firstCourses = "";
+      String secondCourses = "";
+      if (pos != -1) {
+        firstCourses = outstandingCourses.substring(0, pos+1);
+        secondCourses = outstandingCourses.substring(pos+1, outstandingCourses.length());
+        secondCourses = "\t" + secondCourses;
+        document.add(new Paragraph(firstCourses));
+        Paragraph sCour = new Paragraph();
+        sCour.add(new Tab());
+        sCour.add(secondCourses);
+        document.add(sCour);
+      } else {
+        document.add(new Paragraph(outstandingCourses));
+      }
 
         Paragraph paragraph = new Paragraph();
         document.add(paragraph);
@@ -524,7 +591,7 @@ public class App
         return false;
       }
     }
-    public static boolean parsePreReqsInput(String input, Student student) {
+    public static boolean parsePreReqsInput(String input, Student student, ArrayList<Course> levelingCourses) {
       if(input.equals("")) {
         ArrayList<Course> empty = new ArrayList<Course>();
         student.getDegreePlan().setPreRequisiteCourses(empty);
@@ -534,10 +601,11 @@ public class App
         String[] preReqs = input.split(",");
         ArrayList<Course> coursesToKeep = new ArrayList<Course>();
         for (String preReq : preReqs) {
+          //Needs to add check to see if the course already is taken
           int position = Integer.valueOf(preReq);
-          coursesToKeep.add(student.getDegreePlan().getPreRequisiteCourses().get(position));
+          coursesToKeep.add(levelingCourses.get(position));
         }
-        student.getDegreePlan().setPreRequisiteCourses(coursesToKeep);
+        student.setPreReqCourses(coursesToKeep);
         return true;
       } catch (Exception e) {
         return false;
@@ -763,6 +831,20 @@ public class App
       NTpreReq.add(new Course("CS", 5390, "Computer Networks"));
       NTpreReq.add(new Course("CS", 3341, "Probablility and Statistics in Computer Science"));
       return NTpreReq;
+    }
+
+    public static ArrayList<Course> initalizeLevelingCourses() {
+      ArrayList<Course> levelingCourses = new ArrayList<Course>();
+      levelingCourses.add(new Course("CS", 3341, "Probablility and Statistics in Computer Science"));
+      levelingCourses.add(new Course("CS", 5303,"Computer Science 1"));
+      levelingCourses.add(new Course("CS", 5330, "Computer Science 2"));
+      levelingCourses.add(new Course("CS", 5333,"Discrete Structures"));
+      levelingCourses.add(new Course("CS", 5343, "Algorithm Analysis & Data Structures"));
+      levelingCourses.add(new Course("CS", 5348, "Operating Systems Concepts"));
+      levelingCourses.add(new Course("CS", 5349,"Automata Theory"));
+      levelingCourses.add(new Course("CS", 5354, "Software Engineering"));
+      levelingCourses.add(new Course("CS", 5390, "Computer Networks"));
+      return levelingCourses;
     }
 
 }

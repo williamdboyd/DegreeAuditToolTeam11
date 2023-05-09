@@ -21,10 +21,11 @@ public class Course {
     }
 
     //Constructor with outline information
-    public Course(String prefix, int number, String description){
+    public Course(String prefix, Integer number, String description){
         this.prefix = prefix;
         this.number = number;
         this.description = description;
+        this.grade = "none";
     }
 
     //Constructor for Course with full information

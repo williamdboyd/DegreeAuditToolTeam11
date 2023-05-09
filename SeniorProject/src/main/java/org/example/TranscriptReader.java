@@ -92,7 +92,7 @@ public class TranscriptReader
                     }
                     h = line.charAt(hh);
                 }
-                hold.setMajor(line.substring(hh, line.indexOf("Major")));
+                hold.setMajor(line.substring(hh, line.indexOf("Major")));    
             }
             if(line.contains("Combined Cum")){
                 hold.setCumulativeGPA(Float.parseFloat(line.substring(17,22)));
@@ -106,7 +106,9 @@ public class TranscriptReader
             if(courseCheck.matcher(line).find()){
                 //System.out.println("This is a  course\n" + line + "\n\n\n");
                 if(Integer.parseInt(line.substring(line.indexOf(" ") + 1, line.indexOf(" ") + 2)) > 4){
-                    hold.addCourse(parseCourse(line, sem));
+                    Course temp = parseCourse(line, sem);
+                    if ((temp.getPrefix().equals("CS")) || temp.getPrefix().equals("SE")) 
+                        hold.addCourse(temp); 
                 }
             }
             //System.out.println(line + "\n");
