@@ -92,10 +92,6 @@ public class App
            // System.out.println("Before init student Courses: ");
             student.initializeCourses();
            // System.out.println("After init sutdent courses:" + DP.getCoreCourses().toString());
-            System.out.println("Pre-Reqs Chosen:");
-            for (Course course : student.getPreReqCourses()) {
-              System.out.println(course.toString());
-            }
 
             invalidInput = false;
 
