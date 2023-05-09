@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 
-public class TranscriptReader 
+public class TranscriptReader
 {
     public static Student parsePDF(String file){
         String output = "";
@@ -21,7 +21,7 @@ public class TranscriptReader
             while(true){
                 try {
                     textFromPage = PdfTextExtractor.getTextFromPage(p, count);
-            
+
                     //System.out.println(textFromPage);
                     output = output + textFromPage;
                     count++;
@@ -50,9 +50,9 @@ public class TranscriptReader
 
         for(int i=0; i < output.length(); i++)
         {    if(output.charAt(i) == '\n')
-                countL++;
+            countL++;
         }
-        
+
         for(int i = 0; i < countL; i++){
             line = output2.substring(0, output2.indexOf("\n"));
             output2 = output2.substring(output2.indexOf("\n") + 1);
@@ -61,7 +61,6 @@ public class TranscriptReader
                     sem = line;
                     //System.out.println(sem + " is the semester");
                     if(masterf){
-                        hold.setSem1(sem);
                         //System.out.println("This is the first semester");
                         fsem = sem;
                         masterf = false;
@@ -96,7 +95,7 @@ public class TranscriptReader
                 hold.setMajor(line.substring(hh, line.indexOf("Major")));
             }
             if(line.contains("Combined Cum")){
-                hold.setCcGPA(Float.parseFloat(line.substring(17,22)));
+                hold.setCumulativeGPA(Float.parseFloat(line.substring(17,22)));
                 //System.out.println("GPA is " + hold.getCcGPA());
             }
             if(line.contains("Student ID:")){
@@ -117,7 +116,7 @@ public class TranscriptReader
 
     public static Course parseCourse(String line, String sem){
         Course ret = new Course();
-        ret.setSemester(sem);
+        ret.setSemesterTaken(sem);
         ret.setPrefix(line.substring(0, line.indexOf(" ")));
         //System.out.println(ret.getPrefix() + " is the pre");
         line = line.substring(line.indexOf(" ") + 1);
@@ -133,7 +132,10 @@ public class TranscriptReader
         ret.setDescription(line.substring(0, hh - 1));
         //System.out.println(ret.getDescription() + " is desc");
         line = line.substring(hh);
-        ret.setCreds(Float.parseFloat(line.substring(0, 5)));
+        String creds = String.valueOf(ret.getNumber());
+        creds = creds.substring(1,2);
+        int credits = Integer.parseInt(creds);
+        ret.setCreds(Double.valueOf(credits));
         //System.out.println(ret.getCreds());
         hh = 0;
         h = '0';
