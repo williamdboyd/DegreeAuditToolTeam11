@@ -599,6 +599,34 @@ public class Student {
             this.checkElectiveCourses(this.degreePlan.getElectiveHourRequirement());
     }
 
+    public boolean deleteCourse(String input){
+        String[] courseInfo = input.split(" ");
+        if (courseInfo[0].equals("core")){
+            for (Course course : this.coreCourses){
+                if (course.getPrefix().equals(courseInfo[1]) && String.valueOf(course.getNumber()).equals(courseInfo[2])){
+                    this.coreCourses.remove(course);
+                    return true;
+                }
+            }
+        } else if (courseInfo[0].equals("elective")){
+            for (Course course : this.electiveCourses){
+                if (course.getPrefix().equals(courseInfo[1]) && String.valueOf(course.getNumber()).equals(courseInfo[2])){
+                    this.electiveCourses.remove(course);
+                    return true;
+                }
+            }
+
+        } else if (courseInfo[0].equals("prereq")) {
+            for (Course course : this.preReqCourses){
+                if (course.getPrefix().equals(courseInfo[1]) && String.valueOf(course.getNumber()).equals(courseInfo[2])){
+                    this.preReqCourses.remove(course);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     // Getters/Setters for the variables
     public String getName() {

@@ -168,13 +168,26 @@ public class App
         String input = sc.nextLine();
         if (input.equals("Y")) {
           boolean nestedInput = true;
-          System.out.println("Would you like to move a course? If not enter Cancel.(Move/Cancel):");
           while(nestedInput) {
+            System.out.println("Would you like to change a course? If not enter Cancel.(Move/Delete/Cancel):");
             String operation = sc.nextLine();
             if (operation.equals("Add")) {
               //System.out.println("Please enter the course you would like to add EX:(CS 63** Artificial Intelligence A-) ");
             } else if (operation.equals("Delete")) {
-              //System.out.println("Please enter the course you would like to delete EX:(CS 63** Artificial Intelligence A-) ");
+              System.out.println("Please enter the course you would like to delete EX:(prereq CS 63**) ");
+              boolean doubleNestedInput = true;
+              while(doubleNestedInput) {
+                String deleteCourse = sc.nextLine();
+                if(deleteCourse.equals("Cancel")) {
+                  doubleNestedInput = false;
+                } else if(student.deleteCourse(deleteCourse)) {
+                  System.out.println("Course deleted successfully");
+                  doubleNestedInput = false;
+                } else {
+                  System.out.println("Invalid input, Try again:");
+                }
+
+              }
             } else if (operation.equals("Move")) {
               System.out.println("Please enter the EXISTING course you would like to move EX:(CS 5343 prereq to elective):");
               boolean doubleNestedInput = true;
