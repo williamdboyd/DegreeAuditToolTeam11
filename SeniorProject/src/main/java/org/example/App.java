@@ -1,12 +1,15 @@
 package org.example;
 
 
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.TabAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
+
 
 import java.io.FileNotFoundException;
 import java.io.File;
@@ -14,9 +17,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+
 import java.util.ArrayList;
 import java.util.List;
-
 
 //just tests the transcript reader on a specified pdf
 
@@ -92,10 +95,6 @@ public class App
            // System.out.println("Before init student Courses: ");
             student.initializeCourses();
            // System.out.println("After init sutdent courses:" + DP.getCoreCourses().toString());
-            System.out.println("Pre-Reqs Chosen:");
-            for (Course course : student.getPreReqCourses()) {
-              System.out.println(course.toString());
-            }
 
             invalidInput = false;
 
@@ -237,7 +236,7 @@ public class App
       while(validInput) {
         String input = sc.nextLine();
         if (input.equals("Y")) {
-          //generateDegreePlanPDF(student, student.degreePlan);
+          createReport(student, student.degreePlan);
           validInput = false;
         } else if (input.equals("N")) {
           validInput = false;
@@ -623,6 +622,270 @@ public class App
       } catch (Exception e) {
         return false;
       }
+    }
+
+    public static void createReport(Student passStudent, DegreePlan plan) {
+        Student student = passStudent;
+        String path = student.getName() + ".pdf";
+        PdfWriter pdfWriter = null;
+        try {
+            pdfWriter = new PdfWriter(path);
+        } catch(Exception e) {
+            System.out.println("Error creating PDF");
+        }
+        PdfDocument pdfDocument = new PdfDocument(pdfWriter);
+        pdfDocument.addNewPage();
+        Document document = new Document(pdfDocument);
+
+        //Creating Title of the PDF
+        Paragraph heading = new Paragraph();
+        Text title = new Text("DEGREE PLAN");
+        Text title2 = new Text("\nUNIVERSITY OF DALLAS");
+        Text title3 = new Text("\nMASTER OF " + student.getMajor().toUpperCase());
+        heading.add(title);
+        heading.add(title2);
+        heading.add(title3);
+        heading.setTextAlignment(TextAlignment.CENTER); // aligning to the Center
+        heading.setBold();
+        heading.setFontSize(12);
+        document.add(heading);
+
+
+
+        //Creating the General Student Info
+        document.add(createEntry("Name of Student", student.getName()));
+        document.add(createEntry("Student I.D Number", Integer.toString(student.getID())));
+        document.add(createEntry("Semester Admitted to Program", student.getAdmittedDate()));
+        document.add(createEntry("Anticipated Graduation", student.getAnticipatedGraduation()));
+
+
+        //Table Header
+        Table table = new Table(new float[] {350f,100f,100f,100f,100f});
+        table.addCell("Course Title").setTextAlignment(TextAlignment.CENTER).setBold();
+        table.addCell("Course Number").setTextAlignment(TextAlignment.CENTER).setBold();
+        table.addCell("UTD Semester").setTextAlignment(TextAlignment.CENTER).setBold();
+        table.addCell("Transfer").setTextAlignment(TextAlignment.CENTER).setBold();
+        table.addCell("Grade").setTextAlignment(TextAlignment.CENTER).setBold();
+        table.startNewRow();
+        document.add(table);
+
+        //First red label
+        Table table2 = new Table(new float[] {1050f});
+        com.itextpdf.kernel.colors.Color myColor = new DeviceRgb(255, 100, 20);
+        table2.addCell("CORE COURSES \t "
+                 + "(15 Credit Hours)"
+                 +" \t "
+                 + "3.19"
+                 +" Grade Point Average Required").setTextAlignment(TextAlignment.CENTER).setBold().setBackgroundColor(myColor,0.25f);
+        document.add(table2);
+
+        //
+        Table table3 = new Table(new float[] {350f,100f,100f,100f,100f}).setFontSize(10);
+        for (int i = 0; i < 5; i++) {
+            if(i < plan.getCoreCourses().size()) {
+
+                //Course Description
+                table3.addCell(plan.getCoreCourses().get(i).getDescription());
+                //Course Name
+                table3.addCell(plan.getCoreCourses().get(i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+
+                //Checking if student took the course
+                if (plan.getCoreCourses().get(i).getSemesterTaken() != null) {
+                    table3.addCell(plan.getCoreCourses().get(i).getSemesterTaken());//Course Semester Take
+                    table3.addCell(String.valueOf(plan.getCoreCourses().get(i).creds));//Course Credits
+                    table3.addCell(plan.getCoreCourses().get(i).getGrade());//Course Grades
+                } else {
+                    table3.addCell("");
+                    table3.addCell("");
+                    table3.addCell("");
+                }
+            }else{
+                table3.addCell("");
+                table3.addCell("");
+                table3.addCell("");
+                table3.addCell("");
+                table3.addCell("");
+            }
+
+            table3.startNewRow();
+        }
+        table3.startNewRow();
+        document.add(table3);
+
+        Table table4 = new Table(new float[] {1050f});
+        table4.addCell("One of the following Five Core Course").setTextAlignment(TextAlignment.CENTER).setBold().setBackgroundColor(myColor,0.25f);
+        document.add(table4);
+
+
+        Table table5 = new Table(new float[] {350f,100f,100f,100f,100f});
+        for (int i = 0; i < 6; i++) {
+            if (5 + i < plan.getCoreCourses().size()){
+                //Course Description
+                table5.addCell(plan.getCoreCourses().get(5 + i).getDescription());
+                //Course Name
+                table5.addCell(plan.getCoreCourses().get(5 + i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+
+                //Checking if student took the course
+                if (plan.getCoreCourses().get(5 + i).getSemesterTaken() != null) {
+                    table5.addCell(plan.getCoreCourses().get(5 + i).getSemesterTaken());//Course Semester Take
+                    table5.addCell(String.valueOf(plan.getCoreCourses().get(5 + i).creds));//Course Credits
+                    table5.addCell(plan.getCoreCourses().get(5 + i).getGrade());//Course Grades
+                } else {
+                    table5.addCell(" ");
+                    table5.addCell(" ");
+                    table5.addCell(" ");
+                }
+
+            }else{
+                table5.addCell(" ");
+                table5.addCell(" ");
+                table5.addCell(" ");
+                table5.addCell(" ");
+                table5.addCell(" ");
+            }
+
+            table5.startNewRow();
+        }
+        table5.startNewRow();
+        document.add(table5);
+
+        Table table6 = new Table(new float[] {1050f});
+        table6.addCell("FIVE APPROVED 6000 LEVEL ELECTIVES \t (15* Credit Hours) \t 3.0 Grade Point Average").setTextAlignment(TextAlignment.CENTER).setBold().setBackgroundColor(myColor,0.25f);
+        document.add(table6);
+
+
+        Table table7 = new Table(new float[] {350f,100f,100f,100f,100f});
+
+        for (int i = 0; i < 5; i++) {
+            //Checking if student took the course
+            if (i < student.getElectiveCourses().size()) {
+                //Course Description
+                table7.addCell(student.getElectiveCourses().get(i).getDescription() );
+                //Course Name
+                table7.addCell(student.getElectiveCourses().get(i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+                table7.addCell(student.getElectiveCourses().get(i).getSemesterTaken());//Course Semester Take
+                table7.addCell(String.valueOf(student.getElectiveCourses().get(i).creds));//Course Credits
+                table7.addCell(student.getElectiveCourses().get(i).getGrade());//Course Grades
+            }else {
+                table7.addCell(" ");
+                table7.addCell(" ");
+                table7.addCell(" ");
+                table7.addCell(" ");
+                table7.addCell(" ");
+            }
+
+            table7.startNewRow();
+        }
+        table7.startNewRow();
+        document.add(table7);
+
+        Table table8 = new Table(new float[] {1050f});
+        table8.addCell("Additional Electives ( 3 Credit Hours minimum)").setTextAlignment(TextAlignment.CENTER).setBold().setBackgroundColor(myColor,0.25f);
+        document.add(table8);
+
+
+        Table table9 = new Table(new float[] {350f,100f,100f,100f,100f});
+        for (int i = 0; i < 3; i++) {
+            //Checking if student took the course
+            if (5 + i < student.getElectiveCourses().size()) {
+                table9.addCell(student.getElectiveCourses().get(i).getSemesterTaken());//Course Description
+                table9.addCell(student.getElectiveCourses().get(i).getDescription()) ;
+                //Course Name
+                table9.addCell(student.getElectiveCourses().get(i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+                //Course Semester Take
+                table9.addCell(String.valueOf(student.getElectiveCourses().get(i).creds));//Course Credits
+                table9.addCell(student.getElectiveCourses().get(i).getGrade());//Course Grades
+            }else {
+                table9.addCell(" ");
+                table9.addCell(" ");
+                table9.addCell(" ");
+                table9.addCell(" ");
+                table9.addCell(" ");
+            }
+                table9.startNewRow();
+        }
+        table9.startNewRow();
+        document.add(table9);
+
+
+        Table table10 = new Table(new float[] {1050f});
+        table10.addCell("Other Requirements").setTextAlignment(TextAlignment.CENTER).setBold().setBackgroundColor(myColor,0.25f);
+        document.add(table10);
+
+        Table table11 = new Table(new float[] {350f,100f,100f,100f,100f});
+        for (int i = 0; i < 2; i++) {
+            //Checking if student took the course
+            if (i < student.getElectiveCourses().size()) {
+                table11.addCell(student.getElectiveCourses().get(i).getDescription()) ;
+                table11.addCell(student.getElectiveCourses().get(i).getSemesterTaken());//Course Description
+                //Course Name
+                table11.addCell(student.getElectiveCourses().get(i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+                //Course Semester Take
+                table11.addCell(String.valueOf(student.getElectiveCourses().get(i).creds));//Course Credits
+                table11.addCell(student.getElectiveCourses().get(i).getGrade());//Course Grades
+            }else {
+                table11.addCell(" ");
+                table11.addCell(" ");
+                table11.addCell(" ");
+                table11.addCell(" ");
+                table11.addCell(" ");
+            }
+            table11.startNewRow();
+        }
+        table11.startNewRow();
+        document.add(table11);
+
+        Table table12 = new Table(new float[] {350f,100f,100f,100f,100f}).setTextAlignment(TextAlignment.CENTER).setBold().setBackgroundColor(myColor,0.25f);
+        table12.addCell("Admission Prerequisites").setBorder(Border.NO_BORDER);
+        table12.addCell("Course").setBorder(Border.NO_BORDER);
+        table12.addCell("UTD Semester").setBorder(Border.NO_BORDER);
+        table12.addCell("Waiver").setBorder(Border.NO_BORDER);
+        table12.addCell("Grades").setBorder(Border.NO_BORDER);
+        document.add(table12);
+
+        Table table13 = new Table(new float[] {350f,100f,100f,100f,100f});
+        for (int i = 0; i < plan.getPreRequisiteCourses().size(); i++) {
+            //Course Description
+            table13.addCell(plan.getPreRequisiteCourses().get(i).getDescription());
+            //Course Name
+            table13.addCell(plan.getPreRequisiteCourses().get(i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+
+            //Checking if student took the course
+            if (plan.getPreRequisiteCourses().get(i).getSemesterTaken() != null) {
+                table13.addCell(plan.getPreRequisiteCourses().get(i).getSemesterTaken());//Course Semester Take
+                table13.addCell(String.valueOf(plan.getPreRequisiteCourses().get(i).creds));//Course Credits
+                table13.addCell(plan.getPreRequisiteCourses().get(i).getGrade());//Course Grades
+            }else {
+                table13.addCell(" ");
+                table13.addCell(" ");
+                table13.addCell(" ");
+            }
+
+            table13.startNewRow();
+        }
+        table5.startNewRow();
+        document.add(table5);
+
+        document.add(new Paragraph("*May include any 6000 or 7000 level CS course without prior permission").setTextAlignment(TextAlignment.CENTER));
+
+        document.add(createEntry("Academic Advisor", "             "));
+        document.add(createEntry("Date Submitted", "             "));
+
+
+        document.close();
+    }
+
+    public static Paragraph createEntry(String key, String value){
+        Paragraph p = new Paragraph();
+        Paragraph p2 = new Paragraph();
+        Text label = new Text(key);
+        p.add(label);
+        p.add(": ");
+        p2.add(value).setUnderline();
+        p.setFixedLeading(10);
+        p2.setFixedLeading(10);
+        p.add(p2);
+        return p;
     }
 
 
