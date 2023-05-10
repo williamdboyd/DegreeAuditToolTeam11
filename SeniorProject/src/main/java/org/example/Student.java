@@ -242,7 +242,8 @@ public class Student {
                 }
             }
         }
-        cumulativeGPA = ((c * coreGPA) + (e * electiveGPA) + (p * pre)) / (e + c + p);
+        cumulativeGPA = ((c * coreGPA) + (e * electiveGPA) ) / (e + c);
+        this.cumulativeGPA = Math.round(this.cumulativeGPA * 1000.0) / 1000.0;
         //System.out.println("Cumulative GPA is: " + cumulativeGPA);
     }
 
@@ -294,6 +295,7 @@ public class Student {
         }
         if(count != 0){
             this.coreGPA = this.coreGPA / count;
+            this.coreGPA = Math.round(this.coreGPA * 1000.0) / 1000.0;
         }
         //System.out.println("Core GPA Calc: " + this.coreGPA);
     }
@@ -305,6 +307,7 @@ public class Student {
         this.electiveGPA = 0;
         //System.out.println("grade calc start");
         for(Course course: electiveCourses){
+            System.out.println(course.fulltoString());
             //System.out.println(course.getGrade());
             //System.out.println(course.fulltoString());
             double a = 0;
@@ -349,6 +352,7 @@ public class Student {
         }
         if(count != 0){
             this.electiveGPA = this.electiveGPA / count;
+            this.electiveGPA = Math.round(this.electiveGPA * 1000.0) / 1000.0;
         }
         //System.out.println("Elective GPA Calc: " + this.electiveGPA);
     }
