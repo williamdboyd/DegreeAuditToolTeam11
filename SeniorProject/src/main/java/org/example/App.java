@@ -496,7 +496,7 @@ public class App
 
       //Creating the General Student Info
       document.add(createParagraphWithTab("Name: ","ID: ", student.getName(), student.getID().toString()));
-      document.add(createParagraphWithTab("Plan: ","Major: ", student.getProgram(), student.getMajor()));
+      document.add(createParagraphWithTab("Plan: ","Major: ", "Master", student.getMajor()));
       document.add(createParagraphWithTab("","Track: ", "", student.getDegreePlan().getDPname()));
 
       //Creating the GPA Info
@@ -515,7 +515,11 @@ public class App
 
       document.add(new Paragraph().add(new Text("Leveling Courses and Pre-requisites from Admission Letter:").setBold()));
       for (Course course : student.getPreReqCourses()) {
-        document.add(new Paragraph(course.toString()));
+        if (course.getGrade() == "none") {
+          document.add(new Paragraph(course.toString()));
+        } else {
+          document.add(new Paragraph(course.toString() + course.getGrade()));
+        }
       }
 
       //Outstanding Requirements

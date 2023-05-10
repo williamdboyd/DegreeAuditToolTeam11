@@ -307,7 +307,7 @@ public class Student {
         this.electiveGPA = 0;
         //System.out.println("grade calc start");
         for(Course course: electiveCourses){
-            System.out.println(course.fulltoString());
+            //System.out.println(course.fulltoString());
             //System.out.println(course.getGrade());
             //System.out.println(course.fulltoString());
             double a = 0;
