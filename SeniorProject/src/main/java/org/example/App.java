@@ -13,6 +13,7 @@ import com.itextpdf.layout.properties.TextAlignment;
 
 import java.io.FileNotFoundException;
 import java.io.File;
+import java.nio.file.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -47,13 +48,13 @@ public class App
       boolean doingPlanning = false;
 
       while(invalidInput) {
-        System.out.println("Please enter \'Planning\' to start a degree plan, or enter \'Audit\' to perform a Audit:");
+        System.out.println("Please enter an option:\nWould you like to...\n1: Start a degree plan\n2: Perform a Audit\n");
         String input = sc.nextLine();
         
-        if(input.equals("Audit")) {
+        if(input.equalsIgnoreCase("Audit") || input.equals("2")) {
           doingAudit = true;
           invalidInput = false;
-        } else if (input.equals("Planning")) {
+        } else if (input.equalsIgnoreCase("Planning") || input.equals("1") || input.equalsIgnoreCase("Plan") || input.equalsIgnoreCase("Degree Plan") || input.equalsIgnoreCase("Degree")) {
           doingPlanning = true;
           invalidInput = false;
         } else {
@@ -62,23 +63,30 @@ public class App
       }
       invalidInput = true;
       while(invalidInput) {
-        System.out.println("Would you like to load a student or create a new one?(Load/Create): ");
+        System.out.println("Would you like to load a student or create a new one?\n1: Load\n2-Create\n");
         String input = sc.nextLine();
-        if(input.equals("Load")) {
-          System.out.println("Please enter the full name of the student you would like to load: ");
-          String name = sc.nextLine();
-          student = loadStudent(name, degreePlans);
-          if (student == null) {
-            System.out.println("Student not found");
-          } else{ 
-            student.initializeCourses();
-            invalidInput = false; 
-          }
-        } else if (input.equals("Create")) {
+        if(input.equalsIgnoreCase("Load") || input.equals("1")) {
+		  boolean nameInput = true;
+		  while(nameInput) {
+            System.out.println("Please enter the full name of the student you would like to load: ");
+            String name = sc.nextLine();
+            student = loadStudent(name, degreePlans);
+            if (student == null) {
+              System.out.println("Student not found");
+            } else{ 
+              student.initializeCourses();
+			  nameInput = false;
+              invalidInput = false; 
+            }
+		  }
+        } else if (input.equalsIgnoreCase("Create") || input.equals("2")) {
           boolean pdfInput = true;
           while(pdfInput){
             System.out.println("Please enter the name of the transcript file you would like to use. EX:(ExampleTranscript.pdf): ");
             String filePath = sc.nextLine();
+			if (!filepath.endsWith(".pdf")) { //If the filename does not have .pdf at the end, add it.
+				filepath.concat(".pdf");
+			  }
             student = TranscriptReader.parsePDF(filePath);
             if (student == null) {
               System.out.println("File not found");
@@ -129,22 +137,22 @@ public class App
           invalidInput = false;
 
           boolean nInput = true;
-          System.out.println("Will this student be fast track, thesis, neither, or both?(Fast/Thesis/Neither/Both):");
+          System.out.println("Will this student be fast track, thesis, neither, or both?\n1: Fast Track\n2: Thesis\n3: Neither\n4: Both\n");
           while(nInput) {
             String FT = sc.nextLine();
-            if(FT.equals("Fast")) {
+            if(FT.equalsIgnoreCase("Fast") || FT.equals("1")) {
               student.setThesis(false);
               student.setFastTrack(true);
               nInput = false;
-            } else if (FT.equals("Thesis")) {
+            } else if (FT.equalsIgnoreCase("Thesis") || FT.equals("2")) {
               student.setThesis(true);
               student.setFastTrack(false);
               nInput = false;
-            } else if (FT.equals("Neither")) {
+            } else if (FT.equalsIgnoreCase("Neither") || FT.equals("3")) {
               student.setFastTrack(false);
               student.setThesis(false);
               nInput = false;
-            } else if (FT.equals("Both")) {
+            } else if (FT.equalsIgnoreCase("Both") || FT.equals("4")) {
               student.setFastTrack(true);
               student.setThesis(true);
               nInput = false;
@@ -161,7 +169,7 @@ public class App
             System.out.println("The following is a list of Pre-Req or leveling courses: ");
 
             for(Course course : levelingCourses) {
-              System.out.println(String.valueOf(count) + "." + course.toString());
+              System.out.println(String.valueOf(count) + ". " + course.toString());
               count += 1;
             }
             System.out.println("Select Pre-Reqs to be included or leave empty if none. EX:(0,1,3):");
@@ -193,21 +201,21 @@ public class App
           System.out.println(course.toString());
         }
   
-        System.out.println("Would you like to edit degree plan?(Y/N):");
+        System.out.println("Would you like to edit this degree plan? (Y/N):");
         String input = sc.nextLine();
-        if (input.equals("Y")) {
+        if (input.equalsIgnoreCase("Y")) {
           boolean nestedInput = true;
           while(nestedInput) {
-            System.out.println("Would you like to change a course? If not enter Cancel.(Move/Delete/Cancel):");
+            System.out.println("Would you like to change a course? If not enter Cancel.\n1: Move\n2: Delete\n3: Cancel\n");
             String operation = sc.nextLine();
-            if (operation.equals("Add")) {
+            if (operation.equalsIgnoreCase("Add")) {
               //System.out.println("Please enter the course you would like to add EX:(CS 63** Artificial Intelligence A-) ");
-            } else if (operation.equals("Delete")) {
+            } else if (operation.equalsIgnoreCase("Delete") || operation.equals("2")) {
               System.out.println("Please enter the course you would like to delete EX:(prereq CS 63**) ");
               boolean doubleNestedInput = true;
               while(doubleNestedInput) {
                 String deleteCourse = sc.nextLine();
-                if(deleteCourse.equals("Cancel")) {
+                if(deleteCourse.equalsIgnoreCase("Cancel") || operation.equals("3")) {
                   doubleNestedInput = false;
                 } else if(student.deleteCourse(deleteCourse)) {
                   System.out.println("Course deleted successfully");
@@ -215,14 +223,13 @@ public class App
                 } else {
                   System.out.println("Invalid input, Try again:");
                 }
-
               }
-            } else if (operation.equals("Move")) {
+            } else if (operation.equalsIgnoreCase("Move") || operation.equals("1")) {
               System.out.println("Please enter the EXISTING course you would like to move EX:(CS 5343 prereq to elective):");
               boolean doubleNestedInput = true;
               while(doubleNestedInput) {
                 String moveCourse = sc.nextLine();
-                if(moveCourse.equals("Cancel")) {
+                if(moveCourse.equalsIgnoreCase("Cancel") || operation.equals("3")) {
                   doubleNestedInput = false;
                 } else if(student.moveCourse(moveCourse)) {
                   System.out.println("Course moved successfully");
@@ -232,13 +239,13 @@ public class App
                 }
               }
               nestedInput = false;
-            } else if (operation.equals("Cancel")) {
+            } else if (operation.equalsIgnoreCase("Cancel")) {
               nestedInput = false;
             } else {
               System.out.println("Invalid input, Try again:");
             }
           }
-        } else if (input.equals("N")) {
+        } else if (input.equalsIgnoreCase("N")) {
           validInput = false;
         } else {
           System.out.println("Invalid input, Try again:");
@@ -247,13 +254,13 @@ public class App
 
       student.calculateCumGPA();
       validInput = true;
-      System.out.println("Would you like to save this student?(Y/N):");
+      System.out.println("Would you like to save this student to a local file? (Y/N):");
       while(validInput) {
         String input = sc.nextLine();
-        if (input.equals("Y")) {
+        if (input.equalsIgnoreCase("Y")) {
           saveStudent(student, student.getName());
           validInput = false;
-        } else if (input.equals("N")) {
+        } else if (input.equalsIgnoreCase("N")) {
           validInput = false;
         } else {
           System.out.println("Invalid input, Try again:");
@@ -262,13 +269,13 @@ public class App
 
       validInput = true;
       
-      System.out.println("Would you like to generate a printable degree plan?(Y/N):");
+      System.out.println("Would you like to generate a printable degree plan? (Y/N):");
       while(validInput) {
         String input = sc.nextLine();
-        if (input.equals("Y")) {
+        if (input.equalsIgnoreCase("Y")) {
           createReport(student, student.degreePlan);
           validInput = false;
-        } else if (input.equals("N")) {
+        } else if (input.equalsIgnoreCase("N")) {
           validInput = false;
         } else {
           System.out.println("Invalid input, Try again:");
@@ -279,9 +286,9 @@ public class App
       validInput = true;
       while(validInput) {
         String input = sc.nextLine();
-        if (input.equals("Y")) {
+        if (input.equalsIgnoreCase("Y")) {
           validInput = false;
-        } else if (input.equals("N")) {
+        } else if (input.equalsIgnoreCase("N")) {
           System.exit(0);
         } else {
           System.out.println("Invalid input, Try again:");
@@ -294,7 +301,7 @@ public class App
       System.out.println("Will the student be taking a extra Elective?(Y/N):");
       while(validInput) {
         String input = sc.nextLine();
-        if (input.equals("Y")) {
+        if (input.equalsIgnoreCase("Y")) {
           boolean nestedInput = true;
           System.out.println("Please enter the prefix and the number of the course you would like to add EX:(CS 63** Algorithms): ");
           while(nestedInput){
@@ -313,7 +320,7 @@ public class App
             }
           }
           validInput = false;
-        } else if (input.equals("N")) {
+        } else if (input.equalsIgnoreCase("N")) {
           validInput = false;
         } else {
           System.out.println("Invalid input, try again:");
@@ -324,9 +331,9 @@ public class App
       validInput = true;
       while(validInput) {
         String input = sc.nextLine();
-        if(input.equals("Y")){
-
-        } else if (input.equals("N")) {
+        if(input.equalsIgnoreCase("Y")){
+			
+        } else if (input.equalsIgnoreCase("N")) {
           validInput = false;
         } else {
           System.out.println("Invalid input, try again:");
@@ -393,18 +400,18 @@ public class App
       }
       
 
-      System.out.println("Would you like to generate and save a printable audit?(Y/N):");
+      System.out.println("Would you like to generate and save a printable audit? (Y/N):");
       validInput = true;
       while(validInput) {
         String input = sc.nextLine();
-        if(input.equals("Y")) {
+        if(input.equalsIgnoreCase("Y")) {
           try {
             createAudit(student);
           } catch(IOException e) {
             System.out.println("Couldn't create Audit");
           }
           validInput = false;
-        } else if (input.equals("N")){
+        } else if (input.equalsIgnoreCase("N")){
           validInput = false;
         } else {
           System.out.println("Invalid input, try again:");
@@ -416,6 +423,11 @@ public class App
 
     //Saves the student object as a file in the savedStudents folder
     public static void saveStudent(Student student, String fileName) {
+	  try {
+			Files.createDirectories(Paths.get("savedStudents\\"));
+		} catch (IOException e) {
+			//Everything's fine I hope
+		}
       File myFile = new File("savedStudents\\"+ fileName + ".txt");
       try {
         myFile.createNewFile();
