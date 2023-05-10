@@ -675,11 +675,27 @@ public class App
       try {
         String[] preReqs = input.split(",");
         ArrayList<Course> coursesToKeep = new ArrayList<Course>();
+        List<Integer> didntMakeIt = new ArrayList<Integer>(); 
         for (String preReq : preReqs) {
           //Needs to add check to see if the course already is taken
           int position = Integer.valueOf(preReq);
-          coursesToKeep.add(levelingCourses.get(position));
+          boolean added = false;
+          //coursesToKeep.add(levelingCourses.get(position));
+          for (Course course : student.getPreReqCourses()) {
+            if (course.isEqual(levelingCourses.get(position))){
+              coursesToKeep.add(course);
+              added = true;
+            }
+          }
+          if(!didntMakeIt.contains(position) && !added) {
+            didntMakeIt.add(position);
+          }
         }
+
+        for (Integer integer : didntMakeIt) {
+          coursesToKeep.add(levelingCourses.get(integer));
+        }
+        
         student.setPreReqCourses(coursesToKeep);
         return true;
       } catch (Exception e) {
@@ -825,7 +841,7 @@ public class App
                 //Course Description
                 table7.addCell(student.getElectiveCourses().get(i).getDescription() );
                 //Course Name
-                table7.addCell(student.getElectiveCourses().get(i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+                table7.addCell(student.getElectiveCourses().get(i).getPrefix() + student.getElectiveCourses().get(i).getNumber());
                 table7.addCell(student.getElectiveCourses().get(i).getSemesterTaken());//Course Semester Take
                 table7.addCell(String.valueOf(student.getElectiveCourses().get(i).creds));//Course Credits
                 table7.addCell(student.getElectiveCourses().get(i).getGrade());//Course Grades
@@ -854,7 +870,7 @@ public class App
                 table9.addCell(student.getElectiveCourses().get(i).getSemesterTaken());//Course Description
                 table9.addCell(student.getElectiveCourses().get(i).getDescription()) ;
                 //Course Name
-                table9.addCell(student.getElectiveCourses().get(i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+                table9.addCell(student.getElectiveCourses().get(i).getPrefix() + student.getElectiveCourses().get(i).getNumber());
                 //Course Semester Take
                 table9.addCell(String.valueOf(student.getElectiveCourses().get(i).creds));//Course Credits
                 table9.addCell(student.getElectiveCourses().get(i).getGrade());//Course Grades
@@ -882,7 +898,7 @@ public class App
                 table11.addCell(student.getElectiveCourses().get(i).getDescription()) ;
                 table11.addCell(student.getElectiveCourses().get(i).getSemesterTaken());//Course Description
                 //Course Name
-                table11.addCell(student.getElectiveCourses().get(i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+                table11.addCell(student.getElectiveCourses().get(i).getPrefix() + student.getElectiveCourses().get(i).getNumber());
                 //Course Semester Take
                 table11.addCell(String.valueOf(student.getElectiveCourses().get(i).creds));//Course Credits
                 table11.addCell(student.getElectiveCourses().get(i).getGrade());//Course Grades
@@ -911,7 +927,7 @@ public class App
             //Course Description
             table13.addCell(plan.getPreRequisiteCourses().get(i).getDescription());
             //Course Name
-            table13.addCell(plan.getPreRequisiteCourses().get(i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+            table13.addCell(plan.getPreRequisiteCourses().get(i).getPrefix() + plan.getPreRequisiteCourses().get(i).getNumber());
 
             //Checking if student took the course
             if (plan.getPreRequisiteCourses().get(i).getSemesterTaken() != null) {
