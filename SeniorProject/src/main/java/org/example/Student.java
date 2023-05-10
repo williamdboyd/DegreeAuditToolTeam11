@@ -13,6 +13,7 @@ public class Student {
     List<Course> coreCourses;
     List<Course> electiveCourses;
     List<Course> preReqCourses;
+    List<Course> coreSelection;
     String specialization;
     String admittedDate;
     String anticipatedGraduation;
@@ -23,6 +24,7 @@ public class Student {
     double electiveGPA;
     String academicStanding;
     boolean graduationStatus;
+    Integer remainingCoreSelection;
 
     //Default Constructor
     public Student() {
@@ -35,6 +37,7 @@ public class Student {
         coreCourses = new ArrayList<Course>();
         electiveCourses = new ArrayList<Course>();
         preReqCourses = new ArrayList<Course>();
+        coreSelection = new ArrayList<Course>();
         specialization = "";
         admittedDate = "";
         anticipatedGraduation = "";
@@ -45,6 +48,7 @@ public class Student {
         electiveGPA = 0.0;
         academicStanding = "";
         graduationStatus = false;
+        remainingCoreSelection = 0;
     }
 
     //Constructor for Student with full information
@@ -160,6 +164,24 @@ public class Student {
         }
 
         return altPreReqCourses;
+    }
+
+
+    public ArrayList<Course> checkCoreSelectionCourses(ArrayList<Course> DPcoreSelection) {
+        ArrayList<Course> altCoreSelection = new ArrayList<Course>(DPcoreSelection);
+        for (Course course : courses) {
+            for (Course coreSelectionCourse : DPcoreSelection) {
+                if (course.isEqual(coreSelectionCourse) && this.remainingCoreSelection > 0) {
+                    altCoreSelection.remove(coreSelectionCourse);
+                    this.coreCourses.add(course);
+                    remainingCoreSelection -= 1;
+                } else if (course.isEqual(coreSelectionCourse)) {
+                    electiveCourses.add(course);
+                }
+            }
+        }
+
+        return altCoreSelection;
     }
 
     public boolean moveCourse(String moveInput) {
@@ -595,6 +617,9 @@ public class Student {
             this.checkPreRequisiteCourses(this.degreePlan.getPreRequisiteCourses());
             //Checking student core Requirements
             this.checkCoreCourses(this.degreePlan.getCoreCourses());
+            this.remainingCoreSelection = this.degreePlan.getNumCoreSelection();
+            //Checking core selection Requirements
+            this.checkCoreSelectionCourses(this.degreePlan.getCoreSelection());
             //Checking student elective Requirements
             this.checkElectiveCourses(this.degreePlan.getElectiveHourRequirement());
     }

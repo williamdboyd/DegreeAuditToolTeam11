@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.Scanner;
 
 
@@ -824,7 +825,7 @@ public class App
                 //Course Description
                 table7.addCell(student.getElectiveCourses().get(i).getDescription() );
                 //Course Name
-                table7.addCell(student.getElectiveCourses().get(i).getPrefix() + plan.getCoreCourses().get(i).getNumber());
+                table7.addCell(student.getElectiveCourses().get(i).getPrefix() + student.getElectiveCourses().get(i).getNumber());
                 table7.addCell(student.getElectiveCourses().get(i).getSemesterTaken());//Course Semester Take
                 table7.addCell(String.valueOf(student.getElectiveCourses().get(i).creds));//Course Credits
                 table7.addCell(student.getElectiveCourses().get(i).getGrade());//Course Grades
@@ -955,15 +956,56 @@ public class App
     public static ArrayList<DegreePlan> initializeDegreePlans() {
       ArrayList<DegreePlan> degreePlans = new ArrayList<DegreePlan>();
 
+      ArrayList<Course> SEselectCore = new ArrayList<Course>();
+      ArrayList<Course> DSselectCore = new ArrayList<Course>();
+      ArrayList<Course> sysSelectCore = new ArrayList<Course>();
+      ArrayList<Course> cyberSelectCore = new ArrayList<Course>();
+      ArrayList<Course> ISselectCore = new ArrayList<Course>();
+      ArrayList<Course> ICselectCore = new ArrayList<Course>();
+      ArrayList<Course> TraditionalselectCore = new ArrayList<Course>();
+      ArrayList<Course> NTselectCore = new ArrayList<Course>();
+
+
+      DSselectCore.add(new Course("CS", 6301, "Social Network Analytics"));
+      DSselectCore.add(new Course("CS", 6320, "Natural Language Processing"));
+      DSselectCore.add(new Course("CS", 6327, "Video Analytics"));
+      DSselectCore.add(new Course("CS", 6347, "Statistics for Machine Learning"));
+      DSselectCore.add(new Course("CS", 6360, "Database Design"));
+
+      sysSelectCore.add(new Course("CS", 6349, "Network Security"));
+      sysSelectCore.add(new Course("CS", 6376, "Parallel Processing"));
+      sysSelectCore.add(new Course("CS", 6380, "Distributed Computing"));
+      sysSelectCore.add(new Course("CS", 6397, "Synthesis and Optimization of High-Performance Systems"));
+      sysSelectCore.add(new Course("CS", 6399, "Parallel Architecture and Systems"));
+
+      ICselectCore.add(new Course("CS", 6323, "Computer Animation and Gaming"));
+      ICselectCore.add(new Course("CS", 6328, "Modeling and Simulation"));
+      ICselectCore.add(new Course("CS", 6331, "Multimedia Systems"));
+      ICselectCore.add(new Course("CS", 6334, "Virtual Reality"));
+      ICselectCore.add(new Course("CS", 6366, "Computer Graphics"));
+
+      cyberSelectCore.add(new Course("CS", 6332, "System Security & Malicious Code Analysis"));
+      cyberSelectCore.add(new Course("CS", 6348, "Data and Applications Security"));
+      cyberSelectCore.add(new Course("CS", 6349, "Network Security"));
+      cyberSelectCore.add(new Course("CS", 6377, "Introduction To Cryptography"));
+
+      ISselectCore.add(new Course("CS", 6360, "Database Design"));
+      ISselectCore.add(new Course("CS", 6378, "Advanced Operating Systems"));
+
+      TraditionalselectCore.add(new Course("CS", 6353, "Compiler Construction"));
+      TraditionalselectCore.add(new Course("CS", 6360, "Database Design"));
+      TraditionalselectCore.add(new Course("CS", 6371, "Advanced Programming Languages"));
+
+
       //Initializing the Degree Plans
-      DegreePlan SoftwareEngineering = new DegreePlan("Software Engineering", setSECoreCourses(), 15.0, setSEpreReq());
-      DegreePlan DataScience = new DegreePlan("Data Science", setDSCoreCourses(), 15.0, setDSpreReq());
-      DegreePlan Systems = new DegreePlan("Systems", setSysCoreCourses(), 15.0, setSyspreReq());
-      DegreePlan CyberSecurity = new DegreePlan("Cyber Security", setCyberCoreCourses(), 12.0, setCyberpreReq());
-      DegreePlan IntelligentSystems = new DegreePlan("Intelligent Systems", setISCoreCourses(), 15.0, setISpreReq());
-      DegreePlan InteractiveComputing = new DegreePlan("Interactive Computing", setICCoreCourses(), 15.0, setICpreReq());
-      DegreePlan TraditionalCS = new DegreePlan("Traditional CS", setTCCoreCourses(), 15.0, setTCpreReq());
-      DegreePlan NetworksTelecommunication = new DegreePlan("Networks and Telecommunication", setNTCoreCourses(), 15.0, setNTpreReq());
+      DegreePlan SoftwareEngineering = new DegreePlan("Software Engineering", setSECoreCourses(), SEselectCore, 15.0, setSEpreReq(), 0);
+      DegreePlan DataScience = new DegreePlan("Data Science", setDSCoreCourses(), DSselectCore, 15.0, setDSpreReq(), 1);
+      DegreePlan Systems = new DegreePlan("Systems", setSysCoreCourses(), sysSelectCore, 15.0, setSyspreReq(), 1);
+      DegreePlan CyberSecurity = new DegreePlan("Cyber Security", setCyberCoreCourses(), cyberSelectCore, 12.0, setCyberpreReq(), 2);
+      DegreePlan IntelligentSystems = new DegreePlan("Intelligent Systems", setISCoreCourses(), ISselectCore, 15.0, setISpreReq(), 1);
+      DegreePlan InteractiveComputing = new DegreePlan("Interactive Computing", setICCoreCourses(), ICselectCore, 15.0, setICpreReq(), 3);
+      DegreePlan TraditionalCS = new DegreePlan("Traditional CS", setTCCoreCourses(), TraditionalselectCore, 15.0, setTCpreReq(), 2);
+      DegreePlan NetworksTelecommunication = new DegreePlan("Networks and Telecommunication", setNTCoreCourses(), NTselectCore, 15.0, setNTpreReq(), 0);
 
       //adding the degree plans to the list
       degreePlans.add(SoftwareEngineering);
@@ -1008,12 +1050,6 @@ public class App
       DSCourses.add(new Course("CS", 6363, "Design and Analysis of Computer Algorithms"));
       DSCourses.add(new Course("CS", 6375, "Machine Learning"));
 
-      DSCourses.add(new Course("CS", 6301, "Social Network Analytics"));
-      DSCourses.add(new Course("CS", 6320, "Natural Language Processing"));
-      DSCourses.add(new Course("CS", 6327, "Video Analytics"));
-      DSCourses.add(new Course("CS", 6347, "Statistics for Machine Learning"));
-      DSCourses.add(new Course("CS", 6360, "Database Design"));
-
       return DSCourses;
     }
 
@@ -1034,12 +1070,6 @@ public class App
       SysCourses.add(new Course("CS", 6363, "Design and Analysis of Computer Networks"));
       SysCourses.add(new Course("CS", 6378, "Advanced Operating Systems"));
       SysCourses.add(new Course("CS", 6396, "Real-Time Systems"));
-
-      SysCourses.add(new Course("CS", 6349, "Network Security"));
-      SysCourses.add(new Course("CS", 6376, "Parallel Processing"));
-      SysCourses.add(new Course("CS", 6380, "Distributed Computing"));
-      SysCourses.add(new Course("CS", 6397, "Synthesis and Optimization of High-Performance Systems"));
-      SysCourses.add(new Course("CS", 6399, "Parallel Architecture and Systems"));
       return SysCourses;
     }
 
@@ -1061,9 +1091,6 @@ public class App
       ISCourses.add(new Course("CS", 6363, "Design and Analysis of Computer Algorithms"));
       ISCourses.add(new Course("CS", 6364, "Artificial Intelligence"));
       ISCourses.add(new Course("CS", 6375, "Machine Learning"));
-
-      ISCourses.add(new Course("CS", 6360, "Database Design"));
-      ISCourses.add(new Course("CS", 6378, "Advanced Operating Systems"));
       return ISCourses;
     }
 
@@ -1082,11 +1109,6 @@ public class App
       CyberCourses.add(new Course("CS", 6324, "Information Security"));
       CyberCourses.add(new Course("CS", 6363, "Design and Analysis of Computer Algorithms"));
       CyberCourses.add(new Course("CS", 6378, "Advanced Operating Systems"));
-
-      CyberCourses.add(new Course("CS", 6332, "System Security & Malicious Code Analysis"));
-      CyberCourses.add(new Course("CS", 6348, "Data and Applications Security"));
-      CyberCourses.add(new Course("CS", 6349, "Network Security"));
-      CyberCourses.add(new Course("CS", 6377, "Introduction To Cryptography"));
       return CyberCourses;
     }
 
@@ -1115,12 +1137,6 @@ public class App
       ArrayList<Course> ICCourses = new ArrayList<Course>();
       ICCourses.add(new Course("CS", 6326, "Human Computer Interaction"));
       ICCourses.add(new Course("CS", 6363, "Design and Analysis of Computer Algorithms"));
-      ICCourses.add(new Course("CS", 6323, "Computer Animation and Gaming"));
-      ICCourses.add(new Course("CS", 6328, "Modeling and Simulation"));
-      ICCourses.add(new Course("CS", 6331, "Multimedia Systems"));
-      ICCourses.add(new Course("CS", 6334, "Virtual Reality"));
-      ICCourses.add(new Course("CS", 6366, "Computer Graphics"));
-
       return ICCourses;
     }
 
@@ -1129,9 +1145,6 @@ public class App
       TCCourses.add(new Course("CS", 6363, "Design and Analysis of Computer Algorithms"));
       TCCourses.add(new Course("CS", 6378, "Advanced Operating Systems"));
       TCCourses.add(new Course("CS", 6390, "Advanced Computer Networks"));
-      TCCourses.add(new Course("CS", 6353, "Compiler Construction"));
-      TCCourses.add(new Course("CS", 6360, "Database Design"));
-      TCCourses.add(new Course("CS", 6371, "Advanced Programming Languages"));
       return TCCourses;
     }
 
