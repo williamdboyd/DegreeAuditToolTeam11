@@ -74,55 +74,84 @@ public class App
             invalidInput = false; 
           }
         } else if (input.equals("Create")) {
-          System.out.println("Please enter the name of the transcript file you would like to use. EX:(ExampleTranscript.pdf): ");
-          String filePath = sc.nextLine();
-          student = TranscriptReader.parsePDF(filePath);
-          if (student == null) {
-            System.out.println("File not found");
-          } else{ 
-            boolean DPInput = true;
-            System.out.println("Please enter the name of the degree plan you would like to use: ");
-            while(DPInput) {
-              String DPname = sc.nextLine();
-              DP = getDPbyName(DPname, degreePlans);
-              if (DP == null) {
-                System.out.println("Degree Plan not found, please try again: ");
-              } else {
-                student.setDegreePlan(DP);
-                DPInput = false;
-              }
+          boolean pdfInput = true;
+          while(pdfInput){
+            System.out.println("Please enter the name of the transcript file you would like to use. EX:(ExampleTranscript.pdf): ");
+            String filePath = sc.nextLine();
+            student = TranscriptReader.parsePDF(filePath);
+            if (student == null) {
+              System.out.println("File not found");
             }
-           // System.out.println("Before init student Courses: ");
-            student.initializeCourses();
-           // System.out.println("After init sutdent courses:" + DP.getCoreCourses().toString());
-
-            invalidInput = false;
-
-            boolean nInput = true;
-            System.out.println("Will this student be fast track, thesis, neither, or both?(Fast/Thesis/Neither/Both):");
-            while(nInput) {
-              String FT = sc.nextLine();
-              if(FT.equals("Fast")) {
-                student.setThesis(false);
-                student.setFastTrack(true);
-                nInput = false;
-              } else if (FT.equals("Thesis")) {
-                student.setThesis(true);
-                student.setFastTrack(false);
-                nInput = false;
-              } else if (FT.equals("Neither")) {
-                student.setFastTrack(false);
-                student.setThesis(false);
-                nInput = false;
-              } else if (FT.equals("Both")) {
-                student.setFastTrack(true);
-                student.setThesis(true);
-                nInput = false;
-              } else {
-                System.out.println("Invalid input, Try again:");
-              }
+            else{
+              pdfInput = false;
             }
           }
+          boolean DPInput = true;
+          System.out.println("Please enter the name of the degree plan you would like to use: \nFor the following degree plans, select the number corrosponding to the one you wish to choose:\n1: Software Engineering\n2: Data Science\n3: Systems\n4: Cyber Security\n5: Intelligent Systems\n6: Interactive Computing\n7: Traditional CS\n8: Networks and Telecommunication");
+          while(DPInput) {
+            DPInput = false;
+            String DPname = sc.nextLine();
+            if(DPname.equals("1")){
+              DP = getDPbyName("Software Engineering", degreePlans);
+            }
+            else if(DPname.equals("2")){
+              DP = getDPbyName("Data Science", degreePlans);
+            }
+            else if(DPname.equals("3")){
+              DP = getDPbyName("Systems", degreePlans);
+            }
+            else if(DPname.equals("4")){
+              DP = getDPbyName("Cyber Security", degreePlans);
+            }
+            else if(DPname.equals("5")){
+              DP = getDPbyName("Intelligent Systems", degreePlans);
+            }
+            else if(DPname.equals("6")){
+              DP = getDPbyName("Interactive Computing", degreePlans);
+            }
+            else if(DPname.equals("7")){
+              DP = getDPbyName("Traditional CS", degreePlans);
+            }
+            else if(DPname.equals("8")){
+              DP = getDPbyName("Networks and Telecommunication", degreePlans);
+            }
+            else{
+              System.out.println("Degree Plan not found, please try again: ");
+              DPInput = true;
+            }
+            student.setDegreePlan(DP);
+          }
+          // System.out.println("Before init student Courses: ");
+          student.initializeCourses();
+          // System.out.println("After init sutdent courses:" + DP.getCoreCourses().toString());
+
+          invalidInput = false;
+
+          boolean nInput = true;
+          System.out.println("Will this student be fast track, thesis, neither, or both?(Fast/Thesis/Neither/Both):");
+          while(nInput) {
+            String FT = sc.nextLine();
+            if(FT.equals("Fast")) {
+              student.setThesis(false);
+              student.setFastTrack(true);
+              nInput = false;
+            } else if (FT.equals("Thesis")) {
+              student.setThesis(true);
+              student.setFastTrack(false);
+              nInput = false;
+            } else if (FT.equals("Neither")) {
+              student.setFastTrack(false);
+              student.setThesis(false);
+              nInput = false;
+            } else if (FT.equals("Both")) {
+              student.setFastTrack(true);
+              student.setThesis(true);
+              nInput = false;
+            } else {
+              System.out.println("Invalid input, Try again:");
+            }
+          }
+          
         } else {
           System.out.println("Invalid input");
         }
@@ -324,9 +353,42 @@ public class App
       //Setting Disposition for the list of leveling/pre-req courses
       System.out.println("Please set the disposition of all the uncompleted pre-reqs");
       for (Course course: student.getPreReqCourses()) {
-        System.out.println("What is the disposition of " + course.toString() + "?");
-        String input = sc.nextLine();
-        course.setDescription(input);
+        boolean DSInput = true;
+        while(DSInput){
+          DSInput = false;
+          System.out.println("\nWhat is the disposition of " + course.toString() + "?\n Select the number corrosponding to an option below:\n1: Completed\n2: Waived\n3: Not required by plan or electives\n4: Other(type in)");
+          String input = sc.nextLine();
+          if(input.equals("1")){
+            String semester = "";
+            while(semester.equals("")){
+              System.out.println("Enter the semester of completion");
+              semester = sc.nextLine();
+            }
+            course.setDescription("Completed: " + semester + ": ");
+          }
+          else if(input.equals("2")){
+            System.out.println("Type any aditional info. If there is none, just hit enter.");
+            String extra = sc.nextLine();
+            course.setDescription("Waived" + extra);
+          }
+          else if(input.equals("3")){
+            course.setDescription("Not required by plan or electives");
+          }
+          else if(input.equals("4")){
+            System.out.println("Enter the disposition info.");
+            String extra = sc.nextLine();
+            if(extra.equals("")){
+              System.out.println("This field cannot be left blank.");
+              DSInput = true;
+              continue;
+            }
+            course.setDescription(extra);
+          }
+          else{
+            System.out.println("Invalid input");
+            DSInput = true;
+          }
+        }
       }
       
 
